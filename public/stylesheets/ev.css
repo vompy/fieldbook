@@ -2,25 +2,69 @@
 EV CSS File
 */
 
-body {
-    background-color: #FFFFFF;
+#container {
+    width: 100%;
 }
 
-#container {
-    width: 80%;
+#controls {
+    width: 16.5%;
+    height: 100%;
+    display: inline-block;
+    float: left;
+    text-align: center;
+    padding-top: 5px;
+}
+
+#img-container {
+    width: 83.5%;
+    height: 100%;
+    display: inline-block;
+    float: right;
 }
 
 #finger {
-    height: 30px;
-    width: 30px;
+    height: 40px;
+    width: 40px;
     border-radius: 100%;
-    background-color: dodgerblue;
     opacity: 0.8;
     position: absolute;
     z-index: 1;
 }
 
-#image {
+.tap-color{
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    margin: 30px auto;
+    visibility: hidden;
+    opacity: 0.4;
+}
+
+#tap1 {
+    background-color: yellow;
+}
+
+#tap2 {
+    background-color: orange;
+}
+
+#tap3 {
+    background-color: purple;    
+}
+
+#tap4 {
+    background-color: green;    
+}
+
+#tap5 {
+    background-color: red;   
+}
+
+#tap6 {
+    background-color: blue;    
+}
+
+img {
     width: 100%;
     height: auto;
 }
@@ -36,7 +80,7 @@ body {
     margin: auto;
 }
 
-#imagefile {
+#imageFile {
 	width: 0.1px;
 	height: 0.1px;
 	opacity: 0;

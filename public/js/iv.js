@@ -1,62 +1,58 @@
 /*
+
 IV Javascript File
+
+DO NOT CHANGE ANYTHING IN THIS FILE...non-related additions only
+
 */
 
-// basic variable declarations
+// define web socket
 var socket = io.connect();
-var $targetArea = $('#targetArea');
+
+// define image counter, set to 0
+var count = 0;
 
 // listen for 'tap' coming through web socket
 // append a circle to the point that was tapped or clicked
+// make adjustments so that the center of the circle is the same location as the tap or click
 socket.on('tap', function(location) {
     $('#finger').remove();
-    $('#container').append("<div id='finger'></div>")
+    $('#img-container').append("<div id='finger'></div>")
     var $finger = $('#finger');
     $finger.css({
-        left: location.x - $finger.width() / 2 + 'px',
-        top: location.y - $finger.height() / 2 + 'px'
+        backgroundColor: location.color,
+        left: location.x * $('#image' + count).width() - $finger.width() / 2 + 'px',
+        top: location.y * $('#image' + count).height() - $finger.height() / 2 + 'px'
     });
+    
+    console.log(location.color);
 });
 
-// listen for 'width' coming through web socket
-// set the width of the IV $targetArea to the same width as the reported EV $targetArea
-socket.on('width', function(data) {
-    $targetArea.css('width', data + 'px');
-});
-
-// listen for 'user image' coming through web socket
+// listen for 'image' coming through web socket
 // call image() 
-socket.on('user image', image);
+socket.on('image', image);
 
-// when $targetArea is tapped or clicked, emit the location through web socket       
-function getCoords(event) {
-    var location = {
-        x: event.clientX,
-        y: event.clientY
-    };
-    socket.emit('tap', location);   
-}
-
-// append the image to $targetArea as an <img/>
-function image(base64Image) {
-    $('body').append('<div id="container"><img id="image" onmousedown="getCoords(event)" src="' + base64Image + '"/></div>');
-}
-
-function tapListener() {
-    $('#image').on('mousedown', getCoords(event));
-}
-
-// onload, bind a 'change' event to the 'imageFile' input button
-// the accompanying algorithm encodes it in a way that can pass through the web socket
-$(function() {
-    $('#imagefile').bind('change', function(e){
-        console.log('bind');
-      var data = e.originalEvent.target.files[0];
-      var reader = new FileReader();
-      reader.onload = function(evt){
-        image(evt.target.result);
-        socket.emit('user image', evt.target.result);
-      };
-      reader.readAsDataURL(data);
-    });
+// listen for 'delete image' coming through web socket
+// remove all children of the 'img-container' div
+socket.on('delete image', function() {
+    $('#img-container').children().remove();
 });
+
+// when 'img-container' is tapped or clicked, emit the location through web socket 
+// make appropriate adjustments
+function getCoords(event) {    
+    var $offset = $('#image' + count).offset();
+    var location = {
+        x: (event.pageX - $offset.left - $('#controls').width()) / $('#image' + count).width(),
+        y: (event.pageY - $offset.top) / $('#image' + count).height(),
+        color: $('#finger').css('background-color')
+    };
+    socket.emit('tap', location);
+}
+
+// increment image count by 1
+// append the image to 'img-container' as an <img/>
+function image(base64Image) {
+    count++;
+    $('#img-container').append('<img id="image' + count + '"onmousedown="getCoords(event)" src="' + base64Image + '"/>');
+}

@@ -9,24 +9,21 @@ var server = app.listen(process.env.PORT || 3000);
 var io = socket.listen(server);
 var config = {};
 
-
-
 io.on('connection', (socket) => {
-  console.log('Client connected');
-  socket.on('disconnect', () => console.log('Client disconnected'));
-  socket.on('width', function(data) {
-        io.emit('width', data);
-    });
-    socket.on('user image', function (msg) {
-        socket.broadcast.emit('user image', msg);
+    console.log('Client connected');
+    socket.on('disconnect', () => console.log('Client disconnected'));
+    socket.on('image', function (image) {
+        socket.broadcast.emit('image', image);
     });
     socket.on('tap', function(location) {
         io.emit('tap', location);
     });
+    socket.on('delete image', function() {
+        io.emit('delete image'); 
+    });
 });
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-
 
 // app.set('port', (process.env.PORT || 5000));
 
