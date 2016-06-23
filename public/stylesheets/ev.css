@@ -1,0 +1,46 @@
+/*
+EV CSS File
+*/
+
+body {
+    background-color: #FFFFFF;
+}
+
+#container {
+    width: 80%;
+}
+
+#finger {
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    background-color: dodgerblue;
+    opacity: 0.8;
+    position: absolute;
+    z-index: 1;
+}
+
+#image {
+    width: 100%;
+    height: auto;
+}
+
+#camera-upload {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#imagefile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
