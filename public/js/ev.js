@@ -5,7 +5,7 @@ EV Javascript File
 // basic variable declarations
 var socket = io.connect();
 var count = 0;
-var color = 'rgb(255, 255, 0)';
+var color = $('#tap1').css('background-color');
 
 // listen for 'tap' coming through web socket
 // append a circle to the point that was tapped or clicked
@@ -25,7 +25,9 @@ socket.on('tap', function(location) {
 socket.on('image', image);
 
 socket.on('delete image', function() {
-    $('#img-container').children().remove();
+    if($('#img-container').children().length > 0) {
+        $('#img-container').children().remove();
+    }
 });
       
 // when $targetArea is tapped or clicked, emit the location through web socket
@@ -41,25 +43,25 @@ function getCoords(event) {
 
 // append the image to $targetArea as an <img/>
 function image(base64Image) {
+    count++;
     $('#img-container').append('<img id="image' + count + '"onmousedown="getCoords(event)" src="' + base64Image + '"/>');
+    setControls();
 }
 
 function takePicture() {
     $('#label').click();
-    count++;
-    setTimeout(function() {
-        $('#camera-upload').css({
-            position: 'relative',
-            width: '80%',
-            height: 'auto'
-        });
-        $('.tap-color').css({
-            visibility: 'visible'
-        });
-    }, 1000);
-    if(count > 0) {
-        socket.emit('delete image');
-    }
+    socket.emit('delete image');
+}
+
+function setControls() {
+    $('#camera-upload').css({
+        position: 'relative',
+        width: '80%',
+        height: 'auto'
+    });
+    $('.tap-color').css({
+        visibility: 'visible'
+    });
 }
 
 // onload, call getWidth()
