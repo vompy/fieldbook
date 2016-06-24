@@ -1,11 +1,109 @@
 <!DOCTYPE html>
 <html>
+    
 <head>
   <% include ../partials/header.ejs %>
   <link rel="stylesheet" type="text/css" href="/stylesheets/iv.css" />
 </head>
+    
 <body>
-    <div id='img-container'></div>
-</body>   
+    <div id="navbar">
+            Nav bar coming soon to a div near you    
+    </div>
+        
+    <div id="body">
+
+        <div id="column1">
+            <div id="img-container"> Photo </div>
+            <div id="spacer"></div>
+            <div id="logo">FieldBook</div>
+        </div>
+
+        <div id="column2">
+
+            <div class="description_type">
+                Alteration
+                </br>
+                <button class="description downarrow"></button>
+                <button class="description neutralarrow"></button>
+                <button class="description uparrow"></button>
+            </div>
+
+            <div class="description_type">
+                Color
+                </br>
+                <button id=red class=description></button>
+                <button id=brown class=description></button>
+                <button id=orange class=description></button>
+                <button id=yellow class=description></button>
+                <button id=purple class=description></button>
+                <button id=darkgray class=description></button>
+                <button id=black class=description></button>
+                <button id=white class=description></button>
+            </div>
+
+            <div class="description_type">
+                Gradient
+                </br>
+                <button id=pervasive class=description></button>
+                <button id=superficial class=description></button>
+            </div>
+
+            <div class="description_type">
+                Friability
+                </br>
+                <button class="description downarrow"></button>
+                <button class="description neutralarrow"></button>
+                <button class="description uparrow"></button>
+            </div>
+
+            <div class="description_type">
+                Presence of
+                </br>
+                <button id=water class=description></button>
+                <button id=plantbiomass class=description></button>
+                <button id=animalbiomass class=description></button>
+                <button id=dangerousterrain class=description></button>
+            </div>
+
+            <div class="description_type">
+                Surface condition
+                </br>
+                <button id=intact class=description></button>
+                <button id=fractured class=description></button>
+                <button id=smooth class=description></button>
+                <button id=rough class=description></button>
+            </div>
+
+            <div class="description_type">
+                Texture
+                </br>
+                <button id=porphyritic class=description></button>
+                <button id=aphanitic class=description></button>
+                <button id=stony class=description></button>
+                <button id=glassy class=description></button>
+                <button id=banded class=description></button>
+                <button id=scoriaceous class=description></button>
+            </div>
+
+            <div class="description_type">
+                Weathering
+                </br>
+                <button class="description downarrow"></button>
+                <button class="description neutralarrow"></button>
+                <button class="description uparrow"></button>
+            </div>
+
+            <div id="notes">
+                Notes:
+                </br></br>
+                <textarea id="notes_field" rows="4"></textarea>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
     <script src="/js/iv.js"></script>
 </html>
