@@ -35,33 +35,30 @@ EV CSS File
     height: 40px;
     width: 40px;
     border-radius: 100%;
-    margin: 30px auto;
+    margin: 45px auto;
     visibility: hidden;
     opacity: 0.4;
 }
 
 #tap1 {
-    background-color: yellow;
+    background-color: #ED5B57; 
+    opacity: 1.0;
 }
 
 #tap2 {
-    background-color: orange;
+    background-color: #FACB45;
 }
 
 #tap3 {
-    background-color: purple;    
+    background-color: #BAD26F;    
 }
 
 #tap4 {
-    background-color: green;    
+    background-color: #7EC3D1;    
 }
 
 #tap5 {
-    background-color: red;   
-}
-
-#tap6 {
-    background-color: blue;    
+    background-color: #AD598D;    
 }
 
 img {
