@@ -6,6 +6,8 @@ DO NOT CHANGE ANYTHING IN THIS FILE...non-related additions only
 
 */
 
+//==========================================================================
+
 // define web socket
 var socket = io.connect();
 
@@ -55,4 +57,41 @@ function getCoords(event) {
 function image(base64Image) {
     count++;
     $('#img-container').append('<img id="image' + count + '"onmousedown="getCoords(event)" src="' + base64Image + '"/>');
+}
+
+// =========================================================================
+
+// do any setup on page load
+function setUp() {
+    
+    var description = $(".description");	
+    
+    // create click event listeners for all the descriptions
+    for (var i = 0; i < description.length; i++) {
+        description[i].onclick = descriptionClicked;
+    }
+    
+}
+
+// change the style, and save the selection
+function descriptionClicked() {
+
+    // fetch the object that was clicked
+    description_object = document.getElementById(this.id);
+    description_border = description_object.style.border;
+
+    // toggle the selection style
+    if (description_border != "thin solid black") {
+        description_object.style.border = "thin solid black";
+    } else {
+        description_object.style.border = "thin solid white";
+    }
+    
+    	
+	return;
+}
+
+
+window.onload = function () { 
+  setUp();
 }

@@ -100,53 +100,53 @@ img {
   width: 60px;
   height: 60px;
   margin: 5px;
-  border: white 0px;
+  border: thin solid white;
   float: left; }
 
 .downarrow {
-  background-image: url(../assets/arrowdown.png); }
+  background-image: url(../assets/arrowdown.PNG); }
 
 .uparrow {
-  background-image: url(../assets/arrowup.png); }
+  background-image: url(../assets/arrowup.PNG); }
 
 .neutralarrow {
-  background-image: url(../assets/arrowneutral.png); }
+  background-image: url(../assets/arrowneutral.PNG); }
 
 #red {
-  background-image: url(../assets/red.png); }
+  background-image: url(../assets/red.PNG); }
 
 #brown {
-  background-image: url(../assets/brown.png); }
+  background-image: url(../assets/brown.PNG); }
 
 #orange {
-  background-image: url(../assets/orange.png); }
+  background-image: url(../assets/orange.PNG); }
 
 #yellow {
-  background-image: url(../assets/yellow.png); }
+  background-image: url(../assets/yellow.PNG); }
 
 #purple {
-  background-image: url(../assets/purple.png); }
+  background-image: url(../assets/purple.PNG); }
 
 #darkgray {
-  background-image: url(../assets/darkgray.png); }
+  background-image: url(../assets/darkgray.PNG); }
 
 #black {
-  background-image: url(../assets/black.png); }
+  background-image: url(../assets/black.PNG); }
 
 #white {
-  background-image: url(../assets/white.png); }
+  background-image: url(../assets/white.PNG); }
 
 #pervasive {
-  background-image: url(../assets/pervasive.png); }
+  background-image: url(../assets/pervasive.PNG); }
 
 #superficial {
   background-image: url(../assets/superficial.png); }
 
 #water {
-  background-image: url(../assets/water.png); }
+  background-image: url(../assets/water.PNG); }
 
 #plantbiomass {
-  background-image: url(../assets/plantbiomass.png); }
+  background-image: url(../assets/plantbiomass.PNG); }
 
 #animalbiomass {
   background-image: url(../assets/animalbiomass.png); }
