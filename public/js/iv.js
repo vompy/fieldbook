@@ -61,6 +61,11 @@ function image(base64Image) {
 
 // =========================================================================
 
+var single_selection_list = ["alteration", "friability", "weathering"];
+var toggle_on_style = "thin solid gray";
+var toggle_off_style = "thin solid white";
+
+
 // do any setup on page load
 function setUp() {
     
@@ -73,22 +78,57 @@ function setUp() {
     
 }
 
-// change the style, and save the selection
+// give feedback that the selection has been made, and save the selection
 function descriptionClicked() {
-
+    
     // fetch the object that was clicked
-    description_object = document.getElementById(this.id);
-    description_border = description_object.style.border;
+    var description_object = document.getElementById(this.id);
+    var description_border = description_object.style.border;
 
-    // toggle the selection style
-    if (description_border != "thin solid black") {
-        description_object.style.border = "thin solid black";
-    } else {
-        description_object.style.border = "thin solid white";
+    // if it doesn't make sense for more than one selection to be made
+    // unselect the others
+    if (singleSelection(description_object.parentElement.id)) {
+        toggleOffAllDescriptions(description_object.parentElement.id);
     }
     
+    // toggle the selection style
+    if (description_border != toggle_on_style) {
+        description_object.style.border = toggle_on_style;
+    } else {
+        description_object.style.border = toggle_off_style;
+    }
     	
 	return;
+}
+
+// check if the given id is description that makes sense to have only one selection
+function singleSelection(id) {
+    
+    var single_selection = false;
+    
+    // check if the description is in the single selection list
+    if (single_selection_list.indexOf(id) == -1) {
+        single_selection = false;
+    } else{
+        single_selection = true;
+    }
+    
+    return single_selection;
+}
+
+// unselect any descriptions in the given container
+function toggleOffAllDescriptions(id) {
+    
+    var parent_object = document.getElementById(id);
+    var children = parent_object.childNodes;
+    
+    for(var i = 0; i < children.length; i++) {
+        if (children[i].nodeName == "BUTTON") {
+            children[i].style.border = toggle_off_style;
+        }
+    }
+    
+    return;
 }
 
 
