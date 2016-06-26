@@ -76,6 +76,20 @@ function setUp() {
         description[i].onclick = descriptionClicked;
     }
     
+    window.addEventListener("keydown", startTyping, false);
+}
+
+// give the notes field focus if the user ever starts typing
+function startTyping(e) {
+    
+    if (
+        e.keyCode >= 48 && e.keyCode <= 90 ||   // numbers and letters
+        e.keyCode >= 96 && e.keyCode <= 111 ||  // numpad and operators
+        e.keyCode >= 186 && e.keyCode <= 222    // punctuation
+        ) 
+    {
+        document.getElementById("notes_field").focus();
+    }
 }
 
 // give feedback that the selection has been made, and save the selection
