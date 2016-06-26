@@ -33,6 +33,23 @@ img {
   /*min-width: 1000px;*/
   font-size: 16pt; }
 
+.option {
+  font-size: 16pt;
+  font-family: calibri; }
+
+select {
+  font-size: 18pt;
+  float: left; }
+
+#samplethis {
+  font-size: 16pt;
+  font-family: calibri;
+  margin-left: 30px;
+  margin-right: 10px;
+  margin-top: 0%;
+  padding: 0%;
+  float: left; }
+
 #body {
   background-color: chartreuse;
   height: 900px;

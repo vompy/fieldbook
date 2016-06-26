@@ -2,8 +2,10 @@
 IV SCSS File
 */
 
+$headersize:18pt;
 $textsize: 16pt;
 $container-width: 100%;
+$font-family: calibri;
 
 /* 
     this is the styling of the 'tap' 
@@ -41,6 +43,28 @@ img {
     /*min-width: 1000px;*/
     font-size: $textsize;
 }
+
+.option {
+    font-size: $textsize;
+    font-family: $font-family;
+}
+
+select {
+    font-size: $headersize;
+    float: left;
+}
+
+
+#samplethis {
+    font-size: $textsize;
+    font-family: $font-family;
+    margin-left: 30px;
+    margin-right: 10px;
+    margin-top: 0%;
+    padding: 0%;
+    float: left;
+}
+
 
 #body {
     background-color: chartreuse;
@@ -81,7 +105,7 @@ img {
     font-size: 80pt;
     position: absolute;
     bottom: 0px;
-    font-family: calibri;
+    font-family: $font-family;
 }
 
 .description_type {
@@ -93,7 +117,7 @@ img {
     float: left;
     
     font-size: $textsize;
-    font-family: calibri;
+    font-family: $font-family;
     
     position: relative;
 }
