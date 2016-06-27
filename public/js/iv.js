@@ -76,7 +76,28 @@ function setUp() {
         description[i].onclick = descriptionClicked;
     }
     
+    // create an event listener for any keys being pressed
     window.addEventListener("keydown", startTyping, false);
+    
+    // create an event listener for the submit
+	var submit_button = $("#submit");
+	submit_button[0].onclick = submitClicked;
+}
+
+// clear the form
+function submitClicked() {
+    var description_container = document.getElementById("description_container");
+    
+    // reset all the description selections
+    for (var i = 0; i < description_container.childNodes.length; i++) {
+        if (description_container.childNodes[i].nodeName == "DIV") {
+            toggleOffAllDescriptions(description_container.childNodes[i].id);
+        }
+    }
+    
+    // clear the notes field
+    var notes = document.getElementById("notes_field");
+    notes.value = "";
 }
 
 // give the notes field focus if the user ever starts typing

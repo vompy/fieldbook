@@ -5,6 +5,7 @@ IV SCSS File
 $headersize:18pt;
 $textsize: 16pt;
 $container-width: 100%;
+$max-width: 2000px;
 $font-family: calibri;
 
 /* 
@@ -38,10 +39,11 @@ img {
 
 #navbar {
     background-color: gainsboro;
-    height: 60px;
+    height: 50px;
     width: $container-width;
     /*min-width: 1000px;*/
     font-size: $textsize;
+    max-width: $max-width;
 }
 
 .option {
@@ -70,6 +72,7 @@ select {
     background-color: chartreuse;
     height: 900px;
     width: $container-width;
+    max-width: $max-width;
     /*min-width: 1000px;*/
 }
 
@@ -82,7 +85,7 @@ select {
 }
 
 #column2 {
-    background-color: coral;
+    background-color: white;
     height:100%;
     width: $container-width / 2;
     float: right;
@@ -108,9 +111,13 @@ select {
     font-family: $font-family;
 }
 
+#description_container {
+    height: 80%;
+}
+
 .description_type {
     background-color: white;
-    height: 20%;
+    height: 25%;
     width: 50%;
     outline: thin solid gray;
     
@@ -122,21 +129,26 @@ select {
     position: relative;
 }
 
-
-#notes {
-    background-color: gainsboro;
-    padding-top: 10px;
-    width: 100%;
-    height: 17%;
-    float:left;
-    padding: 2%;
-    font-size: $textsize
+#notes_field {
+    width: 96%;
+    padding: 1%;
+    border: 10px solid gainsboro;
+    outline: thin solid gray;
+    font-size: $textsize;
+    font-family: $font-family;
 }
 
-#notes_field {
-    width: 90%;
-    padding: 2%;
-    
+textarea::-webkit-input-placeholder {
+    font-size: $textsize;
+    font-family: $font-family;
+    font-style: italic;
+}
+
+#submit {
+    font-size: $textsize;
+    width: 100%;
+    height: 6%;
+    margin-top: 1%;
 }
 
 .description {
