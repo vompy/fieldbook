@@ -79,7 +79,7 @@ select {
 #column1 {
     background-color: white;
     height: 100%;
-    width: $container-width / 2;
+    width: 40%;
     float: left;
     position: relative;
 }
@@ -87,7 +87,7 @@ select {
 #column2 {
     background-color: white;
     height:100%;
-    width: $container-width / 2;
+    width: 60%;
     float: right;
 }
 
@@ -119,14 +119,18 @@ select {
     background-color: white;
     height: 25%;
     width: 50%;
-    outline: thin solid gray;
-    
-    float: left;
-    
+    outline: thin solid gray;    
+    float: left;    
     font-size: $textsize;
-    font-family: $font-family;
-    
+    font-family: $font-family;    
     position: relative;
+    padding: 15px;
+
+    .inner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 #notes_field {
@@ -156,96 +160,37 @@ textarea::-webkit-input-placeholder {
     background-size: 50px 50px;
     background-position: center center;
     background-repeat: no-repeat;
-    width: 60px;
+    width: auto;
     height: 60px;
-    border: thin solid white;
-    
+    padding: 5px;
+    border: thin solid white;   
     float: left;
+    font-size: 1.5em;
+    color: color(medium-gray);
+    text-align: center;
 }
 
-.downarrow {
-    background-image: url(../assets/arrowdown.png);
-}
-.uparrow {
-    background-image: url(../assets/arrowup.png);
-}
-.neutralarrow {
-    background-image: url(../assets/arrowneutral.png);
+.description_label {
+    display: block;
+    font-family: sans-serif;
+    font-size: .4em;
+    margin-top: 10px;
+    text-align: center;
 }
 
-#red {
-    background-image: url(../assets/red.png);
-}
-#brown {
-    background-image: url(../assets/brown.png);
-}
-#orange {
-    background-image: url(../assets/orange.png);
-}
-#yellow {
-    background-image: url(../assets/yellow.png);
-}
-#purple {
-    background-image: url(../assets/purple.png);
-}
-#darkgray {
-    background-image: url(../assets/darkgray.png);
-}
-#black {
-    background-image: url(../assets/black.png);
-}
-#white {
-    background-image: url(../assets/white.png);
-}
 
-#pervasive {
-    background-image: url(../assets/pervasive.png);
-}
-#superficial {
-    background-image: url(../assets/superficial.png);
-}
 
-#water {
-    background-image: url(../assets/water.png);
-}
-#plantbiomass {
-    background-image: url(../assets/plantbiomass.png);
-}
-#animalbiomass {
-    background-image: url(../assets/animalbiomass.png);
-}
-#dangerousterrain {
-    background-image: url(../assets/dangerousterrain.png);
-}
-
-#porphyritic {
-    background-image: url(../assets/porphyritic.png);
-}
-#aphanitic {
-    background-image: url(../assets/aphanitic.png);
-}
-#stony {
-    background-image: url(../assets/stony.png);
-}
-#glassy {
-    background-image: url(../assets/glassy.png);
-}
-#banded {
-    background-image: url(../assets/banded.png);
-}
-#scoriaceous {
-    background-image: url(../assets/scoriaceous.png);
-}
-
-#intact {
-    background-image: url(../assets/intact.png);
-}
-#fractured {
-    background-image: url(../assets/fractured.png);
-}
-#smooth {
-    background-image: url(../assets/smooth.png);
-}
-#rough {
-    background-image: url(../assets/rough.png);
+$colors: red, brown, orange, yellow, purple, gray, black, white;
+@each $color in $colors {
+    $i: index($colors, $color);
+    .icon-color { 
+        &.#{$color} {
+            &:before {
+                color: #{$color};
+                margin: 0px;
+                display: block;
+                font-size: 1em;
+            }                
+        }
+    }
 }

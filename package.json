@@ -28,5 +28,9 @@
     "url": "https://github.com/heroku/node-js-getting-started/issues"
   },
   "homepage": "https://github.com/heroku/node-js-getting-started#readme",
-  "author": ""
+  "author": "",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-sass": "^2.3.2"
+  }
 }
