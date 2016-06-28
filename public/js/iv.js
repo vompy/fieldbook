@@ -61,20 +61,13 @@ function image(base64Image) {
 
 // =========================================================================
 
-var single_selection_list = ["alteration", "friability", "weathering"];
-var toggle_on_style = "thin solid gray";
-var toggle_off_style = "thin solid white";
+// var single_selection_list = ["alteration", "friability", "weathering"];
+// var toggle_on_style = "thin solid gray";
+// var toggle_off_style = "thin solid white";
 
 
 // do any setup on page load
 function setUp() {
-    
-    var description = $(".description");	
-    
-    // create click event listeners for all the descriptions
-    for (var i = 0; i < description.length; i++) {
-        description[i].onclick = descriptionClicked;
-    }
     
     // create an event listener for any keys being pressed
     window.addEventListener("keydown", startTyping, false);
@@ -89,12 +82,8 @@ function submitClicked() {
     var description_container = document.getElementById("description_container");
     
     // reset all the description selections
-    for (var i = 0; i < description_container.childNodes.length; i++) {
-        if (description_container.childNodes[i].nodeName == "DIV") {
-            toggleOffAllDescriptions(description_container.childNodes[i].id);
-        }
-    }
-    
+    $('button').removeClass('active');
+
     // clear the notes field
     var notes = document.getElementById("notes_field");
     notes.value = "";
@@ -113,59 +102,15 @@ function startTyping(e) {
     }
 }
 
-// give feedback that the selection has been made, and save the selection
-function descriptionClicked() {
-    
-    // fetch the object that was clicked
-    var description_object = document.getElementById(this.id);
-    var description_border = description_object.style.border;
+var myStringArray = ['alteration', 'color', 'gradient', 'friability', 'presenceof', 'surfacecondition', 'texture', 'weathering'];
 
-    // if it doesn't make sense for more than one selection to be made
-    // unselect the others
-    if (singleSelection(description_object.parentElement.id)) {
-        toggleOffAllDescriptions(description_object.parentElement.id);
-    }
-    
-    // toggle the selection style
-    if (description_border != toggle_on_style) {
-        description_object.style.border = toggle_on_style;
-    } else {
-        description_object.style.border = toggle_off_style;
-    }
-    	
-	return;
+for (var i = 0; i < myStringArray.length; i++) {
+    // alert(myStringArray[i]);
+    $(document).on('click', '#' + myStringArray[i] +' button', function() {
+       $(this).parent().children('button').not(this).removeClass('active');
+       $(this).addClass("active");
+    });
 }
-
-// check if the given id is description that makes sense to have only one selection
-function singleSelection(id) {
-    
-    var single_selection = false;
-    
-    // check if the description is in the single selection list
-    if (single_selection_list.indexOf(id) == -1) {
-        single_selection = false;
-    } else{
-        single_selection = true;
-    }
-    
-    return single_selection;
-}
-
-// unselect any descriptions in the given container
-function toggleOffAllDescriptions(id) {
-    
-    var parent_object = document.getElementById(id);
-    var children = parent_object.childNodes;
-    
-    for(var i = 0; i < children.length; i++) {
-        if (children[i].nodeName == "BUTTON") {
-            children[i].style.border = toggle_off_style;
-        }
-    }
-    
-    return;
-}
-
 
 window.onload = function () { 
   setUp();

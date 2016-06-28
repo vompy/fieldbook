@@ -161,13 +161,22 @@ textarea::-webkit-input-placeholder {
     background-position: center center;
     background-repeat: no-repeat;
     width: auto;
-    height: 60px;
-    padding: 5px;
+    height: auto;
+    padding: 10px;
     border: thin solid white;   
     float: left;
     font-size: 1.5em;
     color: color(medium-gray);
     text-align: center;
+
+    &.active {
+        color: #64a66a;
+        border: 1px solid #64a66a;
+    }
+
+    &:focus {
+        background-color: white;
+    }
 }
 
 .description_label {
