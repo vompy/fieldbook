@@ -803,7 +803,9 @@ textarea::-webkit-input-placeholder {
     color: #64a66a;
     border: 1px solid #64a66a; }
   .description:focus {
-    background-color: white; }
+    background-color: white;
+    color: #64a66a;
+    outline: none; }
 
 .description_label {
   display: block;

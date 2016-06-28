@@ -102,13 +102,23 @@ function startTyping(e) {
     }
 }
 
-var myStringArray = ['alteration', 'color', 'gradient', 'friability', 'presenceof', 'surfacecondition', 'texture', 'weathering'];
+var selectionArray = ['alteration', 'gradient', 'friability', 'weathering', 'color', 'presenceof', 'surfacecondition', 'texture'];
 
-for (var i = 0; i < myStringArray.length; i++) {
-    // alert(myStringArray[i]);
-    $(document).on('click', '#' + myStringArray[i] +' button', function() {
-       $(this).parent().children('button').not(this).removeClass('active');
-       $(this).addClass("active");
+for (var i = 0; i < selectionArray.length; i++) {
+    $(document).on('click', '#' + selectionArray[i] +' button', function() {
+        
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
+        }
+        else {
+            $(this).addClass("active"); 
+            if (i < 3) {
+                console.log('hi');
+                $(this).parent().children('button').not(this).removeClass('active');
+            }
+
+        }
+        
     });
 }
 
