@@ -1,0 +1,8 @@
+a {
+	color: link(base);
+	font-weight: 100;
+
+	&:hover {
+		color: link(hover);
+	}
+}

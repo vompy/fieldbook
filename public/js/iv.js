@@ -6,6 +6,8 @@ DO NOT CHANGE ANYTHING IN THIS FILE...non-related additions only
 
 */
 
+//==========================================================================
+
 // define web socket
 var socket = io.connect();
 
@@ -55,4 +57,71 @@ function getCoords(event) {
 function image(base64Image) {
     count++;
     $('#img-container').append('<img id="image' + count + '"onmousedown="getCoords(event)" src="' + base64Image + '"/>');
+}
+
+// =========================================================================
+
+// var single_selection_list = ["alteration", "friability", "weathering"];
+// var toggle_on_style = "thin solid gray";
+// var toggle_off_style = "thin solid white";
+
+
+// do any setup on page load
+function setUp() {
+    
+    // create an event listener for any keys being pressed
+    window.addEventListener("keydown", startTyping, false);
+    
+    // create an event listener for the submit
+	var submit_button = $("#submit");
+	submit_button[0].onclick = submitClicked;
+}
+
+// clear the form
+function submitClicked() {
+    var description_container = document.getElementById("description_container");
+    
+    // reset all the description selections
+    $('button').removeClass('active');
+
+    // clear the notes field
+    var notes = document.getElementById("notes_field");
+    notes.value = "";
+}
+
+// give the notes field focus if the user ever starts typing
+function startTyping(e) {
+    
+    if (
+        e.keyCode >= 48 && e.keyCode <= 90 ||   // numbers and letters
+        e.keyCode >= 96 && e.keyCode <= 111 ||  // numpad and operators
+        e.keyCode >= 186 && e.keyCode <= 222    // punctuation
+        ) 
+    {
+        document.getElementById("notes_field").focus();
+    }
+}
+
+var selectionArray = ['alteration', 'gradient', 'friability', 'weathering', 'color', 'presenceof', 'surfacecondition', 'texture'];
+
+for (var i = 0; i < selectionArray.length; i++) {
+    $(document).on('click', '#' + selectionArray[i] +' button', function() {
+        
+        if ($(this).hasClass('active')) {
+            $(this).removeClass('active');
+        }
+        else {
+            $(this).addClass("active"); 
+            if (i < 3) {
+                console.log('hi');
+                $(this).parent().children('button').not(this).removeClass('active');
+            }
+
+        }
+        
+    });
+}
+
+window.onload = function () { 
+  setUp();
 }

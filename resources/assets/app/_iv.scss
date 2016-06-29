@@ -1,0 +1,207 @@
+/*
+IV SCSS File
+*/
+
+$headersize:18pt;
+$textsize: 16pt;
+$container-width: 100%;
+$max-width: 2000px;
+$font-family: calibri;
+
+/* 
+    this is the styling of the 'tap' 
+    feel free to make changes
+*/
+#finger {
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    opacity: 0.8;
+    position: absolute;
+}
+
+/* DO NOT CHANGE ANYTHING */
+img {
+    width: 100%;
+    height: auto;
+}
+
+/* DO NOT CHANGE ANYTHING */
+#imageFile {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+
+#navbar {
+    background-color: gainsboro;
+    height: 50px;
+    width: $container-width;
+    /*min-width: 1000px;*/
+    font-size: $textsize;
+    max-width: $max-width;
+}
+
+.option {
+    font-size: $textsize;
+    font-family: $font-family;
+}
+
+select {
+    font-size: $headersize;
+    float: left;
+}
+
+
+#samplethis {
+    font-size: $textsize;
+    font-family: $font-family;
+    margin-left: 30px;
+    margin-right: 10px;
+    margin-top: 0%;
+    padding: 0%;
+    float: left;
+}
+
+
+#body {
+    background-color: chartreuse;
+    height: 900px;
+    width: $container-width;
+    max-width: $max-width;
+    /*min-width: 1000px;*/
+}
+
+#column1 {
+    background-color: white;
+    height: 100%;
+    width: 40%;
+    float: left;
+    position: relative;
+}
+
+#column2 {
+    background-color: white;
+    height:100%;
+    width: 60%;
+    float: right;
+}
+
+#img-container {
+    background-color: black;
+    height: auto;
+    width: 100%;
+}
+
+#spacer {
+    height: 10vw;
+}
+
+#logo {
+    height: 120px;
+    width: 100%;
+    background-color: white;
+    font-size: 80pt;
+    position: absolute;
+    bottom: 0px;
+    font-family: $font-family;
+}
+
+#description_container {
+    height: 80%;
+}
+
+.description_type {
+    background-color: white;
+    height: 25%;
+    width: 50%;
+    outline: thin solid gray;    
+    float: left;    
+    font-size: $textsize;
+    font-family: $font-family;    
+    position: relative;
+    padding: 15px;
+
+    .inner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+#notes_field {
+    width: 96%;
+    padding: 1%;
+    border: 10px solid gainsboro;
+    outline: thin solid gray;
+    font-size: $textsize;
+    font-family: $font-family;
+}
+
+textarea::-webkit-input-placeholder {
+    font-size: $textsize;
+    font-family: $font-family;
+    font-style: italic;
+}
+
+#submit {
+    font-size: $textsize;
+    width: 100%;
+    height: 6%;
+    margin-top: 1%;
+}
+
+.description {
+    background-color: white;
+    background-size: 50px 50px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: auto;
+    height: auto;
+    padding: 10px;
+    border: thin solid white;   
+    float: left;
+    font-size: 1.5em;
+    color: color(medium-gray);
+    text-align: center;
+
+    &.active {
+        color: #64a66a;
+        border: 1px solid #64a66a;
+    }
+
+    &:focus {
+        background-color: white;
+        color: #64a66a;
+        outline: none;
+    }
+}
+
+.description_label {
+    display: block;
+    font-family: sans-serif;
+    font-size: .4em;
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+
+$colors: red, brown, orange, yellow, purple, gray, black, white;
+@each $color in $colors {
+    $i: index($colors, $color);
+    .icon-color { 
+        &.#{$color} {
+            &:before {
+                color: #{$color};
+                margin: 0px;
+                display: block;
+                font-size: 1em;
+            }                
+        }
+    }
+}

@@ -3,12 +3,24 @@
     
 <head>
   <% include ../partials/header.ejs %>
-  <link rel="stylesheet" type="text/css" href="/stylesheets/iv.css" />
+  <link rel="stylesheet" type="text/css" href="/stylesheets/app.css" />
 </head>
     
 <body>
     <div id="navbar">
-            Nav bar coming soon to a div near you    
+        
+        <select class="dropdown">
+            <option class="option">Sample Location 1</option>
+        </select>   
+        
+        <select class="dropdown">
+            <option class="option">Photo 1</option>
+        </select>
+                
+        <p id="samplethis">Suggest to sample?</p>
+        <input type="radio" class="radiobutton">Yes
+        <input type="radio" class="radiobutton">No
+        
     </div>
         
     <div id="body">
@@ -16,89 +28,169 @@
         <div id="column1">
             <div id="img-container"> Photo </div>
             <div id="spacer"></div>
-            <div id="logo">FieldBook</div>
         </div>
 
         <div id="column2">
-
-            <div class="description_type">
+            <div id="description_container">
+            <div id="alteration" class="description_type">
                 Alteration
                 </br>
-                <button class="description downarrow"></button>
-                <button class="description neutralarrow"></button>
-                <button class="description uparrow"></button>
+                <div class="inner">
+                    <button id="alterationdown" class="description icon-low">
+                        <span class="description_label">Low</span>
+                    </button>
+                    <button id="alterationneutral" class="description icon-intermediate ">
+                        <span class="description_label">Intermediate</span>
+                    </button>
+                    <button id="alterationup" class="description icon-high">
+                        <span class="description_label">High</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="color" class="description_type">
                 Color
                 </br>
-                <button id=red class=description></button>
-                <button id=brown class=description></button>
-                <button id=orange class=description></button>
-                <button id=yellow class=description></button>
-                <button id=purple class=description></button>
-                <button id=darkgray class=description></button>
-                <button id=black class=description></button>
-                <button id=white class=description></button>
+                <div class="inner">
+                    <button id=red class="description icon-color red">
+                        <span class="description_label">Red</span>
+                    </button>
+                    <button id=brown class="description icon-color brown">
+                        <span class="description_label">Brown</span>
+                    </button>
+                    <button id=orange class="description icon-color orange">
+                        <span class="description_label">Orange</span>
+                    </button>
+                    <button id=yellow class="description icon-color yellow">
+                        <span class="description_label">Yellow</span>
+                    </button>
+                    <button id=purple class="description icon-color purple">
+                        <span class="description_label">Purple</span>
+                    </button>
+                    <button id=darkgray class="description icon-color gray">
+                        <span class="description_label">Gray</span>
+                    </button>
+                    <button id=black class="description icon-color black">
+                        <span class="description_label">Black</span>
+                    </button>
+                    <button id=white class="description icon-color white">
+                        <span class="description_label">White</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="gradient" class="description_type">
                 Gradient
                 </br>
-                <button id=pervasive class=description></button>
-                <button id=superficial class=description></button>
+                <div class="inner">
+                    <button id=pervasive class="description icon-pervasive"><span class="icon-pervasive"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                    <span class="description_label">Pervasive</span>
+                    </button>
+                    <button id=superficial class="description icon-invasive">
+                        <span class="description_label">Superficial</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="friability" class="description_type">
                 Friability
                 </br>
-                <button class="description downarrow"></button>
-                <button class="description neutralarrow"></button>
-                <button class="description uparrow"></button>
+                <div class="inner">
+                    <button id="friabilitydown" class="description icon-low">
+                        <span class="description_label">Low</span>
+                    </button>
+                    <button id="friabilityneutral" class="description icon-intermediate">
+                        <span class="description_label">Intermediate</span>
+                    </button>
+                    <button id="friabilityup" class="description icon-high">
+                        <span class="description_label">High</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="presenceof" class="description_type">
                 Presence of
                 </br>
-                <button id=water class=description></button>
-                <button id=plantbiomass class=description></button>
-                <button id=animalbiomass class=description></button>
-                <button id=dangerousterrain class=description></button>
+                <div class="inner">
+                    <button id=water class="description icon-water">
+                        <span class="description_label">Water</span>
+                    </button>
+                    <button id=plantbiomass class="description icon-plant">
+                        <span class="description_label">Plant</span>
+                    </button>
+                    <button id=animalbiomass class="description icon-poop">
+                        <span class="description_label">Plant Biomass</span>
+                    </button>
+                    <button id=dangerousterrain class="description icon-dangerous-terrain">
+                        <span class="description_label">Dangerous Terrain</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="surfacecondition" class="description_type">
                 Surface condition
                 </br>
-                <button id=intact class=description></button>
-                <button id=fractured class=description></button>
-                <button id=smooth class=description></button>
-                <button id=rough class=description></button>
+                <div class="inner">
+                    <button id=intact class="description icon-intact">
+                        <span class="description_label">Intact</span>
+                    </button>
+                    <button id=fractured class="description icon-fractured">
+                        <span class="description_label">Fractured</span>
+                    </button>
+                    <button id=smooth class="description icon-smooth">
+                        <span class="description_label">Smooth</span>
+                    </button>
+                    <button id=rough class="description icon-rough">
+                        <span class="description_label">Rought</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="texture" class="description_type">
                 Texture
                 </br>
-                <button id=porphyritic class=description></button>
-                <button id=aphanitic class=description></button>
-                <button id=stony class=description></button>
-                <button id=glassy class=description></button>
-                <button id=banded class=description></button>
-                <button id=scoriaceous class=description></button>
+                <div class="inner">
+                    <button id=porphyritic class="description icon-porphyritic">
+                        <span class="description_label">Porphyritic</span>
+                    </button>
+                    <button id=aphanitic class="description icon-aphanitic">
+                        <span class="description_label">Aphanitic</span>
+                    </button>
+                    <button id=stony class="description icon-stony">
+                        <span class="description_label">Stony</span>
+                    </button>
+                    <button id=glassy class="description icon-glassy">
+                        <span class="description_label">Glassy</span>
+                    </button>
+                    <button id=banded class="description icon-banded">
+                        <span class="description_label">Banded</span>
+                    </button>
+                    <button id=scoriaceous class="description icon-scoriaceous">
+                        <span class="description_label">Scoriaceous</span>
+                    </button>                    
+                </div>
             </div>
 
-            <div class="description_type">
+            <div id="weathering" class="description_type">
                 Weathering
                 </br>
-                <button class="description downarrow"></button>
-                <button class="description neutralarrow"></button>
-                <button class="description uparrow"></button>
+                <div class="inner">
+                    <button id="weatheringdown" class="description icon-low">
+                        <span class="description_label">Low</span>
+                    </button>
+                    <button id="weatheringneutral" class="description icon-intermediate">
+                        <span class="description_label">Intermediate</span>
+                    </button>
+                    <button id="weatheringup" class="description icon-high">
+                        <span class="description_label">High</span>
+                    </button>                    
+                </div>
+            </div>
             </div>
 
-            <div id="notes">
-                Notes:
-                </br></br>
-                <textarea id="notes_field" rows="4"></textarea>
-            </div>
+            <textarea id="notes_field" rows="2" placeholder="Notes"></textarea>
+
+            <button id='submit'>Submit</button>
         </div>
 
     </div>
