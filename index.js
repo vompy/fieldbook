@@ -15,11 +15,11 @@ io.on('connection', (socket) => {
     socket.on('image', function (image) {
         socket.broadcast.emit('image', image);
     });
-    socket.on('tap', function(location) {
-        io.emit('tap', location);
+    socket.on('clear', function(data) {
+        io.emit('clear');
     });
-    socket.on('delete image', function() {
-        io.emit('delete image'); 
+    socket.on('draw_line', function(line_coords) {
+        socket.broadcast.emit('draw_line', line_coords);
     });
 });
 

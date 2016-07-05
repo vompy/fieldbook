@@ -3,81 +3,86 @@ EV CSS File
 */
 
 #container {
-    width: 100%;
+    width: auto;
+    height: 100vh;
+    padding: 5px;
 }
 
-#controls {
-    width: 16.5%;
-    height: 100%;
+.controls-landscape {
+    height: inherit;
+    width: 150px;
     display: inline-block;
     float: left;
-    text-align: center;
-    padding-top: 5px;
+    background-color: #B8B8B8;
 }
 
-#img-container {
-    width: 83.5%;
-    height: 100%;
-    display: inline-block;
-    float: right;
-}
-
-#finger {
-    height: 40px;
-    width: 40px;
-    border-radius: 100%;
-    opacity: 0.8;
-    position: absolute;
-    z-index: 1;
-}
-
-.tap-color{
-    height: 40px;
-    width: 40px;
-    border-radius: 100%;
-    margin: 45px auto;
-    visibility: hidden;
-    opacity: 0.4;
-}
-
-#tap1 {
-    background-color: #ED5B57; 
-    opacity: 1.0;
-}
-
-#tap2 {
-    background-color: #FACB45;
-}
-
-#tap3 {
-    background-color: #BAD26F;    
-}
-
-#tap4 {
-    background-color: #7EC3D1;    
-}
-
-#tap5 {
-    background-color: #AD598D;    
-}
-
-img {
+.controls-portrait {
+    height: 150px;
     width: 100%;
-    height: auto;
+    display: inline-block;
+    float: left;
+    background-color: #B8B8B8;
 }
 
+.canvas-landscape {
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    float: left;
+    background-color: #D8D8D8;
+}
+
+.canvas-portrait {
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: inline-block;
+    float:left;
+    background-color: #D8D8D8;
+    
+}
+
+#buttons {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.buttons-landscape {
+    margin: 30px auto;
+    display: block;
+}
+
+.buttons-portrait {
+    margin: 15px;
+    display: inline-block;
+}
+
+
+/*
+@media screen and (max-width: 625px) {
+    #controls {
+        width: 100px;
+    }
+}
+*/
+
+/* camera button styling only */
 #camera-upload {
     width: 200px;
     height: 200px;
     position: absolute;
-    top:0;
+    top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     margin: auto;
+    
+    visibility: hidden;
 }
 
-#imageFile {
+/* camera button styling only */
+#img-file {
 	width: 0.1px;
 	height: 0.1px;
 	opacity: 0;
