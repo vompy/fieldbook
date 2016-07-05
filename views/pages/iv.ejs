@@ -1,201 +1,36 @@
 <!DOCTYPE html>
 <html>
-    
-<head>
-  <% include ../partials/header.ejs %>
-  <link rel="stylesheet" type="text/css" href="/stylesheets/app.css" />
-</head>
-    
-<body>
-    <div id="navbar">
-        
-        <select class="dropdown">
-            <option class="option">Sample Location 1</option>
-        </select>   
-        
-        <select class="dropdown">
-            <option class="option">Photo 1</option>
-        </select>
-                
-        <p id="samplethis">Suggest to sample?</p>
-        <input type="radio" class="radiobutton">Yes
-        <input type="radio" class="radiobutton">No
-        
-    </div>
-        
-    <div id="body">
-
-        <div id="column1">
-            <div id="img-container"> Photo </div>
-            <div id="spacer"></div>
+    <head>
+        <% include ../partials/header.ejs %>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/ev.css" />
+    </head>
+    <body>
+        <div id='container'>
+            <div id='controls'>
+                <div id='buttons'>
+                    <button id='photo'>New Photo</button>    
+                    <button id='pin'>Pin</button>
+                    <button id='draw'>Draw</button>
+                    <button id='clear'>Clear</button>
+                </div>
+            </div>
+            <canvas id='canvas'></canvas>   
         </div>
-
-        <div id="column2">
-            <div id="description_container">
-            <div id="alteration" class="description_type">
-                Alteration
-                </br>
-                <div class="inner">
-                    <button id="alterationdown" class="description icon-low">
-                        <span class="description_label">Low</span>
-                    </button>
-                    <button id="alterationneutral" class="description icon-intermediate ">
-                        <span class="description_label">Intermediate</span>
-                    </button>
-                    <button id="alterationup" class="description icon-high">
-                        <span class="description_label">High</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="color" class="description_type">
-                Color
-                </br>
-                <div class="inner">
-                    <button id=red class="description icon-color red">
-                        <span class="description_label">Red</span>
-                    </button>
-                    <button id=brown class="description icon-color brown">
-                        <span class="description_label">Brown</span>
-                    </button>
-                    <button id=orange class="description icon-color orange">
-                        <span class="description_label">Orange</span>
-                    </button>
-                    <button id=yellow class="description icon-color yellow">
-                        <span class="description_label">Yellow</span>
-                    </button>
-                    <button id=purple class="description icon-color purple">
-                        <span class="description_label">Purple</span>
-                    </button>
-                    <button id=darkgray class="description icon-color gray">
-                        <span class="description_label">Gray</span>
-                    </button>
-                    <button id=black class="description icon-color black">
-                        <span class="description_label">Black</span>
-                    </button>
-                    <button id=white class="description icon-color white">
-                        <span class="description_label">White</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="gradient" class="description_type">
-                Gradient
-                </br>
-                <div class="inner">
-                    <button id=pervasive class="description icon-pervasive"><span class="icon-pervasive"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
-                    <span class="description_label">Pervasive</span>
-                    </button>
-                    <button id=superficial class="description icon-invasive">
-                        <span class="description_label">Superficial</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="friability" class="description_type">
-                Friability
-                </br>
-                <div class="inner">
-                    <button id="friabilitydown" class="description icon-low">
-                        <span class="description_label">Low</span>
-                    </button>
-                    <button id="friabilityneutral" class="description icon-intermediate">
-                        <span class="description_label">Intermediate</span>
-                    </button>
-                    <button id="friabilityup" class="description icon-high">
-                        <span class="description_label">High</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="presenceof" class="description_type">
-                Presence of
-                </br>
-                <div class="inner">
-                    <button id=water class="description icon-water">
-                        <span class="description_label">Water</span>
-                    </button>
-                    <button id=plantbiomass class="description icon-plant">
-                        <span class="description_label">Plant</span>
-                    </button>
-                    <button id=animalbiomass class="description icon-poop">
-                        <span class="description_label">Plant Biomass</span>
-                    </button>
-                    <button id=dangerousterrain class="description icon-dangerous-terrain">
-                        <span class="description_label">Dangerous Terrain</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="surfacecondition" class="description_type">
-                Surface condition
-                </br>
-                <div class="inner">
-                    <button id=intact class="description icon-intact">
-                        <span class="description_label">Intact</span>
-                    </button>
-                    <button id=fractured class="description icon-fractured">
-                        <span class="description_label">Fractured</span>
-                    </button>
-                    <button id=smooth class="description icon-smooth">
-                        <span class="description_label">Smooth</span>
-                    </button>
-                    <button id=rough class="description icon-rough">
-                        <span class="description_label">Rought</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="texture" class="description_type">
-                Texture
-                </br>
-                <div class="inner">
-                    <button id=porphyritic class="description icon-porphyritic">
-                        <span class="description_label">Porphyritic</span>
-                    </button>
-                    <button id=aphanitic class="description icon-aphanitic">
-                        <span class="description_label">Aphanitic</span>
-                    </button>
-                    <button id=stony class="description icon-stony">
-                        <span class="description_label">Stony</span>
-                    </button>
-                    <button id=glassy class="description icon-glassy">
-                        <span class="description_label">Glassy</span>
-                    </button>
-                    <button id=banded class="description icon-banded">
-                        <span class="description_label">Banded</span>
-                    </button>
-                    <button id=scoriaceous class="description icon-scoriaceous">
-                        <span class="description_label">Scoriaceous</span>
-                    </button>                    
-                </div>
-            </div>
-
-            <div id="weathering" class="description_type">
-                Weathering
-                </br>
-                <div class="inner">
-                    <button id="weatheringdown" class="description icon-low">
-                        <span class="description_label">Low</span>
-                    </button>
-                    <button id="weatheringneutral" class="description icon-intermediate">
-                        <span class="description_label">Intermediate</span>
-                    </button>
-                    <button id="weatheringup" class="description icon-high">
-                        <span class="description_label">High</span>
-                    </button>                    
-                </div>
-            </div>
-            </div>
-
-            <textarea id="notes_field" rows="2" placeholder="Notes"></textarea>
-
-            <button id='submit'>Submit</button>
-        </div>
-
-    </div>
-
-</body>
-
-    <script src="/js/iv.js"></script>
+        <svg id="camera-upload" data-name="camera-upload" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 115.92 132.6">
+          <defs>
+              <style>.cls-1,.cls-2{fill:none;stroke:#000;stroke-miterlimit:10;stroke-width:4px;}.cls-1{stroke-linecap:round;}.cls-3{font-size:12px;font-family:Open Sans;}</style>
+          </defs>
+          <title>camera-upload</title>
+          <path d="M63.22,76.72a13.6,13.6,0,1,1,13.6-13.6A13.61,13.61,0,0,1,63.22,76.72Zm0-23.1a9.6,9.6,0,1,0,9.6,9.6A9.6,9.6,0,0,0,63.22,53.62Z" transform="translate(-5.16 -3.31)"/>
+          <path d="M94,92.12H32.42a9.77,9.77,0,0,1-9.7-9.7V47.72a9.77,9.77,0,0,1,9.7-9.7h9.2a1.33,1.33,0,0,0,1.1-.8l2.4-7.2a5.51,5.51,0,0,1,4.9-3.6h26.2a5.26,5.26,0,0,1,4.9,3.6l2.4,7.2a1.33,1.33,0,0,0,1.1.8h9.2a9.77,9.77,0,0,1,9.7,9.7v34.7A9.42,9.42,0,0,1,94,92.12ZM32.42,42a5.76,5.76,0,0,0-5.7,5.7v34.7a5.76,5.76,0,0,0,5.7,5.7H94a5.76,5.76,0,0,0,5.7-5.7V47.72A5.76,5.76,0,0,0,94,42h-9.2a5.26,5.26,0,0,1-4.9-3.6l-2.4-7.2a1.33,1.33,0,0,0-1.1-.8H50.12a1.33,1.33,0,0,0-1.1.8l-2.4,7.3a5.51,5.51,0,0,1-4.9,3.6h-9.3V42Z" transform="translate(-5.16 -3.31)"/>
+          <path d="M63.22,84.42a21.3,21.3,0,1,1,21.2-21.3A21.32,21.32,0,0,1,63.22,84.42Zm0-38.5a17.25,17.25,0,1,0,17.3,17.2A17.31,17.31,0,0,0,63.22,45.92Z" transform="translate(-5.16 -3.31)"/>
+          <path d="M91.32,47.72a2.7,2.7,0,1,1-2.7,2.7,2.69,2.69,0,0,1,2.7-2.7m0-3a5.7,5.7,0,1,0,5.7,5.7,5.76,5.76,0,0,0-5.7-5.7h0Z" transform="translate(-5.16 -3.31)"/>
+          <path class="cls-1" d="M91.32,53.12" transform="translate(-5.16 -3.31)"/>
+          <circle class="cls-2" cx="57.96" cy="57.96" r="55.96"/>
+          <text class="cls-3" transform="translate(26.41 129.35)">Take photo</text>
+        </svg>
+        <input type='file' id='img-file' accept='image/*' capture='camera'>
+        <label id='label' for='img-file' for='new'></label>
+    </body>
+    <script src="/js/ev.js"></script>
 </html>

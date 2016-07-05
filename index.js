@@ -9,17 +9,48 @@ var server = app.listen(process.env.PORT || 3000);
 var io = socket.listen(server);
 var config = {};
 
-io.on('connection', (socket) => {
-    console.log('Client connected');
+var images = [];
+
+var recent_line = [];
+var recent_pin = [];
+
+var queue = {
+    lines: [],
+    pins: []
+};
+
+io.on('connection', function(socket) {
+    console.log('Client connected: ' + socket.id);
+
     socket.on('disconnect', () => console.log('Client disconnected'));
-    socket.on('image', function (image) {
+    
+    socket.on('image', function(image) {
         socket.broadcast.emit('image', image);
+        images.push(image);
     });
+    
     socket.on('clear', function(data) {
         io.emit('clear');
     });
+    
     socket.on('draw_line', function(line_coords) {
         socket.broadcast.emit('draw_line', line_coords);
+    });
+    
+    socket.on('previous_line', function(previous_line) {
+        recent_line = previous_line;
+    });
+    
+    socket.on('line_end', function(data){
+        queue.lines.push(recent_line);
+    });
+    
+    socket.on('pin_drop', function(data){
+        queue.pins.push(data);
+    });
+    
+    socket.on('redraw', function(data) {
+        io.emit('redraw', queue);
     });
 });
 

@@ -19,16 +19,33 @@ var buttons = document.getElementById('buttons');
 var lines_to_draw = []; // Array of recieved lines to draw
 var line_coords = []; // Array of local lines to be sent
 var line_color = 'red';
+
+var lastAction = [];
+
 const ratio = 4/3;
 
 window.onload = function() {    
     resize();
     onLoadCallback();
+    socket.emit('redraw');
 }
 
 window.onresize = function() {
     resize();
+    socket.emit('redraw');
 }
+
+socket.on('redraw', function redraw(data) {
+    for(var i = 0; i < data.lines.length; i++) {
+        context.strokeStyle = data.lines[i][0]; // Color
+        context.moveTo(data.lines[i][1] * canvas.width, data.lines[i][2] * canvas.height);
+        context.beginPath();
+        for(var j = 3; j < data.lines[i].length; j += 2) {
+            context.lineTo(data.lines[i][j] * canvas.width, data.lines[i][j + 1] * canvas.height);
+        }
+        context.stroke();
+    }
+});
 
 function resize() {
     if(getOrientation() == 'landscape') {
@@ -117,7 +134,10 @@ function onLoadCallback () {
     // bool that tells whether drawing is happening 
     var drawing = false;
 
-    socket.on('draw_line', function(line) { lines_to_draw.push(line); }); // Push recieved line in lines_to_draw
+    socket.on('draw_line', function(line) { 
+        lines_to_draw.push(line); // Push recieved line in lines_to_draw
+    });
+    
     // mouse events
     canvas.addEventListener('mousedown', function(e) {
         drawing = true;
@@ -130,7 +150,9 @@ function onLoadCallback () {
     canvas.addEventListener('mouseup', function(e) {
         drawing = false;
         canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
-        socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line
+        socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
+        lastAction.push('draw');
+        socket.emit('line_end');
     });
     // touch events
     canvas.addEventListener('touchstart', function(e) {
@@ -147,6 +169,8 @@ function onLoadCallback () {
         drawing = false;
         canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
         socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line
+        lastAction.push('draw');
+        socket.emit('line_end');
     });
 
     setInterval(function() { // Every 50 ms draw all lines in lines_to_draw
@@ -161,6 +185,9 @@ function onLoadCallback () {
                 context.lineTo(new_line[i] * canvas.width, new_line[i + 1] * canvas.height);
             }
             context.stroke();
+            
+            var previous_line = new_line;
+            socket.emit('previous_line', previous_line);
         }
     }, 50);
 }
@@ -184,6 +211,7 @@ function clearCanvas() {
 }
 
 function image(base64Image) {
+    console.log('image');
     $(cameraIcon).css('visibility', 'hidden');
     $(canvas).css('background-image', 'url(' + base64Image + ')');
     clearCanvas();
