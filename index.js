@@ -9,48 +9,81 @@ var server = app.listen(process.env.PORT || 3000);
 var io = socket.listen(server);
 var config = {};
 
-var images = [];
-
-var recent_line = [];
-var recent_pin = [];
-
 var queue = {
     lines: [],
     pins: []
 };
+var temp = [];
+var redoStack = [];
 
-io.on('connection', function(socket) {
-    console.log('Client connected: ' + socket.id);
-
+io.on('connection', (socket) => {
+    console.log('Client connected');
     socket.on('disconnect', () => console.log('Client disconnected'));
-    
-    socket.on('image', function(image) {
+    socket.on('image', function (image) {
         socket.broadcast.emit('image', image);
-        images.push(image);
     });
-    
     socket.on('clear', function(data) {
         io.emit('clear');
     });
-    
     socket.on('draw_line', function(line_coords) {
         socket.broadcast.emit('draw_line', line_coords);
+        //temp = line_coords;
     });
-    
-    socket.on('previous_line', function(previous_line) {
-        recent_line = previous_line;
+    socket.on('line_end', function(previous_line){
+        //queue.lines.push(temp);
+        //temp = [];
     });
-    
-    socket.on('line_end', function(data){
-        queue.lines.push(recent_line);
+    socket.on('pin_drop', function(pinpoint){
+        //queue.pins.push(pinpoint);
+        socket.broadcast.emit('pin_drop', pinpoint);
     });
-    
-    socket.on('pin_drop', function(data){
-        queue.pins.push(data);
-    });
-    
     socket.on('redraw', function(data) {
-        io.emit('redraw', queue);
+        //io.emit('redraw', queue);
+    });
+    
+    socket.on('recording', function(data) {
+       socket.broadcast.emit('recording'); 
+    });
+    
+    socket.on('undo', function(data) {
+        redoStack.push(queue.lines.pop());
+        
+        console.log('queue.lines[0] = ' + queue.lines[0]);
+        console.log('queue.lines[1] = ' + queue.lines[1]);
+        console.log('queue.lines[2] = ' + queue.lines[2]);
+
+        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
+        
+        console.log('redoStack[0] = ' + redoStack[0]);
+        console.log('redoStack[1] = ' + redoStack[1]);
+        console.log('redoStack[2] = ' + redoStack[2]);
+        
+        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
+        
+        if(queue.lines.length > 0) {
+            io.emit('redraw', queue);
+        }
+    });
+    
+    socket.on('redo', function(data) {
+        
+        queue.lines.push(redoStack.pop());
+        
+        console.log('queue.lines[0] = ' + queue.lines[0]);
+        console.log('queue.lines[1] = ' + queue.lines[1]);
+        console.log('queue.lines[2] = ' + queue.lines[2]);
+
+        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');
+        
+        console.log('redoStack[0] = ' + redoStack[0]);
+        console.log('redoStack[1] = ' + redoStack[1]);
+        console.log('redoStack[2] = ' + redoStack[2]);
+        
+        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
+        
+        if(queue.lines.length > 0) {
+            io.emit('redraw', queue);
+        }
     });
 });
 

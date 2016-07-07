@@ -13,7 +13,7 @@ EV CSS File
     width: 150px;
     display: inline-block;
     float: left;
-    background-color: #B8B8B8;
+    background-color: #D8D8D8;
 }
 
 .controls-portrait {
@@ -21,41 +21,51 @@ EV CSS File
     width: 100%;
     display: inline-block;
     float: left;
-    background-color: #B8B8B8;
+    background-color: #D8D8D8;
 }
 
 .canvas-landscape {
+    background-image: url(../assets/no-photo.png);
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
-    background-color: #D8D8D8;
+    background-color: #B8B8B8;
 }
 
 .canvas-portrait {
+    background-image: url(../assets/no-photo.png);
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;
     float:left;
-    background-color: #D8D8D8;
-    
+    background-color: #B8B8B8;  
 }
 
 #buttons {
     text-align: center;
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
 }
 
 .buttons-landscape {
-    margin: 30px auto;
+    margin: 10px auto;
     display: block;
 }
 
 .buttons-portrait {
     margin: 15px;
     display: inline-block;
+}
+
+#pin {
+    margin-top: 140px;
+}
+
+#draw {
+    margin-top: 50px;
+}
+
+#clear {
+    margin-top: 140px;
 }
 
 

@@ -6,7 +6,7 @@ IV Javascript
 
 // basic variable declarations
 var canvas = document.getElementById('canvas');
-var clear = document.getElementById('clear');
+//var clear = document.getElementById('clear');
 var context = canvas.getContext('2d');
 var socket = io.connect();
 var takePhoto = document.getElementById('img-file');
@@ -14,38 +14,72 @@ var cameraIcon = document.getElementById('camera-upload');
 var psuedoIcon = document.getElementById('label');
 var container = document.getElementById('container');
 var controls = document.getElementById('controls');
-var newPhoto = document.getElementById('photo');
+//var newPhoto = document.getElementById('photo');
 var buttons = document.getElementById('buttons');
+//var undo = document.getElementById('undo');
+//var redo = document.getElementById('redo');
+var pin = document.getElementById('pin');
+var draw = document.getElementById('draw');
 var lines_to_draw = []; // Array of recieved lines to draw
 var line_coords = []; // Array of local lines to be sent
-var line_color = 'red';
-
+var line_color = '#7FB2F0';
 var lastAction = [];
-
+var draw_bool = true;
+var resizeTimer;
+context.imageSmoothingEnabled = false;
+var yellowPin_img = new Image();
+yellowPin_img.src = '../assets/yellow-pin.png';
+var bluePin_img = new Image();
+bluePin_img.src = '../assets/blue-pin.png';
 const ratio = 4/3;
 
 window.onload = function() {    
     resize();
     onLoadCallback();
-    socket.emit('redraw');
+    //socket.emit('redraw');
 }
 
 window.onresize = function() {
     resize();
-    socket.emit('redraw');
+//    clearTimeout(resizeTimer);
+//    resizeTimer = setTimeout(function() {
+//    socket.emit('redraw');
+//    }, 250);
 }
 
 socket.on('redraw', function redraw(data) {
-    for(var i = 0; i < data.lines.length; i++) {
-        context.strokeStyle = data.lines[i][0]; // Color
-        context.moveTo(data.lines[i][1] * canvas.width, data.lines[i][2] * canvas.height);
-        context.beginPath();
-        for(var j = 3; j < data.lines[i].length; j += 2) {
-            context.lineTo(data.lines[i][j] * canvas.width, data.lines[i][j + 1] * canvas.height);
-        }
-        context.stroke();
+    console.log(data.lines)
+    context.clearRect(0, 0, canvas.width, canvas.height);     
+    var line_str = data.lines.pop();
+    var new_line = line_str.split(',');
+    context.strokeStyle = new_line[0]; // Color
+    context.moveTo(new_line[1] * canvas.width, new_line[2] * canvas.height);
+    context.beginPath();
+    for(var i = 3; i < new_line.length; i += 2) {
+        context.lineTo(new_line[i] * canvas.width, new_line[i + 1] * canvas.height);
     }
+    context.stroke();
 });
+
+socket.on('pin_drop', function(pinpoint) {
+    pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+});
+
+function pinDrop(color, x, y) {
+    var img;
+    if(color == 'yellow') {
+        img = yellowPin_img;
+    } else if(color == 'blue') {
+        img = bluePin_img;
+    }
+    var pin_ratio = img.width / img.height;
+    var width = canvas.width / 15;
+    var height = width / pin_ratio;
+    var left = x * canvas.width - width / 2;
+    var top = y * canvas.height - height;
+    console.log(left, top);
+    context.drawImage(img, left, top, width, height);
+}
 
 function resize() {
     if(getOrientation() == 'landscape') {
@@ -130,7 +164,7 @@ function startSavingLineCoords(e) {
     socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line
 }
 
-function onLoadCallback () {
+function onLoadCallback() {
     // bool that tells whether drawing is happening 
     var drawing = false;
 
@@ -140,37 +174,61 @@ function onLoadCallback () {
     
     // mouse events
     canvas.addEventListener('mousedown', function(e) {
-        drawing = true;
-        line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
-        context.strokeStyle = line_color;
-        context.beginPath(); // Start drawing locally
-        context.moveTo((e.pageX - canvas.offsetLeft),(e.pageY - canvas.offsetTop));
-        canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
+        if(draw_bool) {
+            drawing = true;
+            line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
+            context.strokeStyle = line_color;
+            context.beginPath(); // Start drawing locally
+            context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
+            canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
+        } else {
+            var pinpoint = {
+                x: (e.pageX - canvas.offsetLeft) / canvas.width,
+                y: (e.pageY - canvas.offsetTop) / canvas.height,
+                color: 'blue'
+            };
+            pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+            socket.emit('pin_drop', pinpoint);
+        }
     });
     canvas.addEventListener('mouseup', function(e) {
-        drawing = false;
-        canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
-        socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
-        lastAction.push('draw');
-        socket.emit('line_end');
+        if(draw_bool) {
+            drawing = false;
+            canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
+            socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
+            lastAction.push('draw');
+            socket.emit('line_end');
+        }
     });
     // touch events
     canvas.addEventListener('touchstart', function(e) {
         e.preventDefault();
-        drawing = true;
-        line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
-        context.strokeStyle = line_color;
-        context.beginPath(); // Start drawing locally
-        context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
-        canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
+        if(draw_bool) {
+            drawing = true;
+            line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
+            context.strokeStyle = line_color;
+            context.beginPath(); // Start drawing locally
+            context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
+            canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
+        } else {
+            var pinpoint = {
+                x: (e.pageX - canvas.offsetLeft) / canvas.width,
+                y: (e.pageY - canvas.offsetTop) / canvas.height,
+                color: 'blue'
+            };
+            pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+            socket.emit('pin_drop', pinpoint);
+        }
     });
     canvas.addEventListener('touchend', function(e) {
         e.preventDefault();
-        drawing = false;
-        canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
-        socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line
-        lastAction.push('draw');
-        socket.emit('line_end');
+        if(draw_bool) {
+            drawing = false;
+            canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
+            socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
+            lastAction.push('draw');
+            socket.emit('line_end');
+        }
     });
 
     setInterval(function() { // Every 50 ms draw all lines in lines_to_draw
@@ -185,33 +243,39 @@ function onLoadCallback () {
                 context.lineTo(new_line[i] * canvas.width, new_line[i + 1] * canvas.height);
             }
             context.stroke();
-            
-            var previous_line = new_line;
-            socket.emit('previous_line', previous_line);
         }
     }, 50);
 }
 
-clear.onclick = function() { socket.emit('clear'); };
-    
-socket.on('clear', clearCanvas);    
-    
-socket.on('image', image);
-     
-clear.addEventListener('click', function() {
-    socket.emit('clear');
-});
+//clear.onclick = function() { socket.emit('clear'); };
 
- newPhoto.addEventListener('click', function() {
-    $(psuedoIcon).click();
-});
+//undo.onclick = function() { socket.emit('undo'); };
+
+//redo.onclick = function() { socket.emit('redo'); };
+
+pin.onclick = function() { draw_bool = false; };
+
+draw.onclick = function() { draw_bool = true; };
+
+socket.on('clear', clearCanvas);        
+
+socket.on('image', image);
+
+socket.on('recording', function(data) { alert('((( RECORDING )))'); });
+     
+//clear.addEventListener('click', function() {
+//    socket.emit('clear');
+//});
+
+// newPhoto.addEventListener('click', function() {
+//    $(psuedoIcon).click();
+//});
 
 function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);     
 }
 
 function image(base64Image) {
-    console.log('image');
     $(cameraIcon).css('visibility', 'hidden');
     $(canvas).css('background-image', 'url(' + base64Image + ')');
     clearCanvas();
