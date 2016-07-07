@@ -36,6 +36,7 @@ const ratio = 4/3;
 window.onload = function() {    
     resize();
     onLoadCallback();
+    
     //socket.emit('redraw');
 }
 
@@ -77,7 +78,9 @@ function pinDrop(color, x, y) {
     var left = x * canvas.width - width / 2;
     var top = y * canvas.height - height / 2;
     console.log(left, top);
-    context.drawImage(img, left, top, width, height);
+    if (left > -15 && top > -15) {
+        context.drawImage(img, left, top, width, height);
+    }
 }
 
 function resize() {
@@ -157,9 +160,10 @@ function portraitResize() {
             
 function startSavingLineCoords(e) {
     e.preventDefault();
-    context.lineTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)); // Draw line locally
+    console.log('mousemove');
+    context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
     context.stroke();
-    line_coords.push([(e.pageX - canvas.offsetLeft) / canvas.width, (e.pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
+    line_coords.push([(e.touches[0].pageX - canvas.offsetLeft) / canvas.width, (e.touches[0].pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
     socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line
 }
 
@@ -173,10 +177,12 @@ function onLoadCallback() {
     
     // mouse events
     canvas.addEventListener('mousedown', function(e) {
+        console.log('mousedown');
         if(draw_bool) {
             drawing = true;
             line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
             context.strokeStyle = line_color;
+            context.lineWidth = 5;
             context.beginPath(); // Start drawing locally
             context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
             canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
@@ -191,9 +197,10 @@ function onLoadCallback() {
         }
     });
     canvas.addEventListener('mouseup', function(e) {
+        console.log('mouseup');
         if(draw_bool) {
-            socket.emit('recording');
-            alert('((( RECORDING )))');
+            //socket.emit('recording');
+            //alert('((( RECORDING )))');
             drawing = false;
             canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
@@ -201,17 +208,19 @@ function onLoadCallback() {
             //socket.emit('line_end');
 
         } else {
-            socket.emit('recording');
-            alert('((( RECORDING )))');
+            //socket.emit('recording');
+            //alert('((( RECORDING )))');
         }
     });
     // touch events
     canvas.addEventListener('touchstart', function(e) {
-        e.preventDefault();
+        console.log('touchstart');        
         if(draw_bool) {
+            e.preventDefault();
             drawing = true;
             line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
             context.strokeStyle = line_color;
+            context.lineWidth = 5;
             context.beginPath(); // Start drawing locally
             context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
             canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
@@ -226,10 +235,11 @@ function onLoadCallback() {
         }
     });
     canvas.addEventListener('touchend', function(e) {
-        e.preventDefault();
+        console.log('touchend');
         if(draw_bool) {
-            socket.emit('recording');
-            alert('((( RECORDING )))');
+            e.preventDefault();
+            //socket.emit('recording');
+            //alert('((( RECORDING )))');
             drawing = false;
             canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
@@ -237,8 +247,8 @@ function onLoadCallback() {
             //socket.emit('line_end');
             
         } else {
-            socket.emit('recording');
-            alert('((( RECORDING )))');
+            //socket.emit('recording');
+            //alert('((( RECORDING )))');
         }
     });
 
@@ -248,6 +258,7 @@ function onLoadCallback() {
             var line_str = lines_to_draw.pop();
             var new_line = line_str.split(','); // new_line is in format color,x1,y1,x2,y2,x3,y3...
             context.strokeStyle = new_line[0]; // Color
+            context.lineWidth = 5;
             context.moveTo(new_line[1] * canvas.width, new_line[2] * canvas.height);
             context.beginPath();
             for(var i = 3; i < new_line.length; i += 2) {
