@@ -197,9 +197,9 @@ function onLoadCallback() {
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
             lastAction.push('draw');
             socket.emit('line_end');
-            socket.emit('recording');
-            alert('((( RECORDING )))');
         }
+        socket.emit('recording');
+        alert('((( RECORDING )))');
     });
     // touch events
     canvas.addEventListener('touchstart', function(e) {
@@ -229,9 +229,9 @@ function onLoadCallback() {
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
             lastAction.push('draw');
             socket.emit('line_end');
-            socket.emit('recording');
-            alert('((( RECORDING )))');
         }
+        socket.emit('recording');
+        alert('((( RECORDING )))');
     });
 
     setInterval(function() { // Every 50 ms draw all lines in lines_to_draw
