@@ -210,7 +210,7 @@ function onLoadCallback() {
             context.strokeStyle = line_color;
             context.beginPath(); // Start drawing locally
             context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
-            canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
+            canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
         } else {
             var pinpoint = {
                 x: (e.pageX - canvas.offsetLeft) / canvas.width,
