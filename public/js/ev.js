@@ -192,13 +192,14 @@ function onLoadCallback() {
     });
     canvas.addEventListener('mouseup', function(e) {
         if(draw_bool) {
+            socket.emit('recording');
+            alert('((( RECORDING )))');
             drawing = false;
             canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
             lastAction.push('draw');
-            socket.emit('line_end');
-            socket.emit('recording');
-            alert('((( RECORDING )))');
+            //socket.emit('line_end');
+
         } else {
             socket.emit('recording');
             alert('((( RECORDING )))');
@@ -227,13 +228,14 @@ function onLoadCallback() {
     canvas.addEventListener('touchend', function(e) {
         e.preventDefault();
         if(draw_bool) {
+            socket.emit('recording');
+            alert('((( RECORDING )))');
             drawing = false;
             canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
             lastAction.push('draw');
-            socket.emit('line_end');
-            socket.emit('recording');
-            alert('((( RECORDING )))');
+            //socket.emit('line_end');
+            
         } else {
             socket.emit('recording');
             alert('((( RECORDING )))');
