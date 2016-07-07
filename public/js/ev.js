@@ -28,9 +28,9 @@ var draw_bool = true;
 var resizeTimer;
 context.imageSmoothingEnabled = false;
 var yellowPin_img = new Image();
-yellowPin_img.src = '../assets/yellow-pin.png';
+yellowPin_img.src = '../assets/yellow-circle.png';
 var bluePin_img = new Image();
-bluePin_img.src = '../assets/blue-pin.png';
+bluePin_img.src = '../assets/blue-circle.png';
 const ratio = 4/3;
 
 window.onload = function() {    
@@ -75,7 +75,7 @@ function pinDrop(color, x, y) {
     var width = canvas.width / 15;
     var height = width / pin_ratio;
     var left = x * canvas.width - width / 2;
-    var top = y * canvas.height - height;
+    var top = y * canvas.height - height / 2;
     console.log(left, top);
     context.drawImage(img, left, top, width, height);
 }
@@ -197,7 +197,7 @@ function onLoadCallback() {
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
             lastAction.push('draw');
             socket.emit('line_end');
-        } else {
+            socket.emit('recording');
             alert('((( RECORDING )))');
         }
     });
@@ -229,9 +229,8 @@ function onLoadCallback() {
             socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
             lastAction.push('draw');
             socket.emit('line_end');
-        } else {
-            alert('((( RECORDING )))');
             socket.emit('recording');
+            alert('((( RECORDING )))');
         }
     });
 
