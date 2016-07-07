@@ -261,7 +261,7 @@ socket.on('clear', clearCanvas);
 
 socket.on('image', image);
 
-socket.on('recording', function(data) { alert('((( RECORDING )))'); });
+socket.on('recording', function(data) { alert('The EV is finished recording for this point'); });
      
 //clear.addEventListener('click', function() {
 //    socket.emit('clear');
