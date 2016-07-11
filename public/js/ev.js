@@ -204,6 +204,7 @@ function portraitResize() {
             
 function startSavingLineCoords(e) {
     e.preventDefault();
+    e.stopPropagation();
     if(detectNonAppleMobile()) {
         context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
         context.stroke();
@@ -260,6 +261,7 @@ function onLoadCallback() {
     canvas.addEventListener('touchstart', function(e) {
         if(draw_bool) {
             e.preventDefault();
+            e.stopPropagation();
             drawing = true;
             line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
             context.strokeStyle = line_color;
@@ -282,6 +284,7 @@ function onLoadCallback() {
     canvas.addEventListener('touchend', function(e) {
         if(draw_bool) {
             e.preventDefault();
+            e.stopPropagation();
             drawing = false;
             canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
             undoStack.push(local_lines);
@@ -482,6 +485,7 @@ function image(base64Image) {
     $(canvas).css('background-image', 'url(' + base64Image + ')');
     clearCanvas();
     $(controls).css('visibility', 'visible');
+    window.scrollTo(0,0);
 }
 
 $(cameraIcon).click(function() {
@@ -504,4 +508,9 @@ function detectNonAppleMobile() {
   } else {
     return false;
   }
+}
+
+document.ontouchmove = function(e) {
+    e.preventDefault();    
+    e.stopPropagation();
 }
