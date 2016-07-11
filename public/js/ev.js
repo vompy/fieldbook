@@ -420,6 +420,9 @@ socket.on('image', image);
 socket.on('recording', function(data) { alert('((( RECORDING )))'); });
      
 clear.addEventListener('click', function() {
+    if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
+        lastAction.push('clear');
+    }
     socket.emit('clear');
 });
 
