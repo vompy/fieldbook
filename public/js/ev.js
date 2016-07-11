@@ -23,7 +23,6 @@ var draw = document.getElementById('draw');
 var lines_to_draw = []; // Array of recieved lines to draw
 var line_coords = []; // Array of local lines to be sent
 var line_color = '#FFF5A6';
-var lastAction = [];
 var draw_bool = true;
 var resizeTimer;
 context.imageSmoothingEnabled = false;
@@ -32,6 +31,18 @@ yellowPin_img.src = '../assets/yellow-circle.png';
 var bluePin_img = new Image();
 bluePin_img.src = '../assets/blue-circle.png';
 const ratio = 4/3;
+
+var local_lines = [];
+var undoStack = [];
+var redoStack = [];
+var received_lines = [];
+var redrawLines = [];
+
+var localPins = [];
+var receivedPins = [];
+
+var lastAction = [];
+
 
 window.onload = function() {    
     resize();
@@ -63,6 +74,7 @@ socket.on('redraw', function redraw(data) {
 
 socket.on('pin_drop', function(pinpoint) {
     pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+    receivedPins.push(pinpoint);
 });
 
 function pinDrop(color, x, y) {
@@ -77,10 +89,7 @@ function pinDrop(color, x, y) {
     var height = width / pin_ratio;
     var left = x * canvas.width - width / 2;
     var top = y * canvas.height - height / 2;
-    console.log(left, top);
-    if (left > -15 && top > -15) {
-        context.drawImage(img, left, top, width, height);
-    }
+    context.drawImage(img, left, top, width, height);
 }
 
 function resize() {
@@ -160,11 +169,17 @@ function portraitResize() {
             
 function startSavingLineCoords(e) {
     e.preventDefault();
-    console.log('mousemove');
-    context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
-    context.stroke();
-    line_coords.push([(e.touches[0].pageX - canvas.offsetLeft) / canvas.width, (e.touches[0].pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
-    socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line
+    if(detectNonAppleMobile()) {
+        context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
+        context.stroke();
+        line_coords.push([(e.touches[0].pageX - canvas.offsetLeft) / canvas.width, (e.touches[0].pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
+    } else {
+        context.lineTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)); // Draw line locally
+        context.stroke();
+        line_coords.push([(e.pageX - canvas.offsetLeft) / canvas.width, (e.pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
+    }
+    local_lines = line_color + ',' + line_coords.join(',');
+    socket.emit('draw_line', local_lines); // send line
 }
 
 function onLoadCallback() {
@@ -177,7 +192,6 @@ function onLoadCallback() {
     
     // mouse events
     canvas.addEventListener('mousedown', function(e) {
-        console.log('mousedown');
         if(draw_bool) {
             drawing = true;
             line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
@@ -193,28 +207,22 @@ function onLoadCallback() {
                 color: 'yellow'
             };
             pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+            localPins.push(pinpoint);
             socket.emit('pin_drop', pinpoint);
+            lastAction.push('pin');
         }
     });
     canvas.addEventListener('mouseup', function(e) {
-        console.log('mouseup');
         if(draw_bool) {
-            //socket.emit('recording');
-            //alert('((( RECORDING )))');
             drawing = false;
             canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
-            socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
+            undoStack.push(local_lines);
+            socket.emit('line_end');
             lastAction.push('draw');
-            //socket.emit('line_end');
-
-        } else {
-            //socket.emit('recording');
-            //alert('((( RECORDING )))');
         }
     });
     // touch events
     canvas.addEventListener('touchstart', function(e) {
-        console.log('touchstart');        
         if(draw_bool) {
             e.preventDefault();
             drawing = true;
@@ -231,24 +239,19 @@ function onLoadCallback() {
                 color: 'yellow'
             };
             pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+            localPins.push(pinpoint);
             socket.emit('pin_drop', pinpoint);
+            lastAction.push('pin');
         }
     });
     canvas.addEventListener('touchend', function(e) {
-        console.log('touchend');
         if(draw_bool) {
             e.preventDefault();
-            //socket.emit('recording');
-            //alert('((( RECORDING )))');
             drawing = false;
-            canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
-            socket.emit('draw_line', line_color + ',' + line_coords.join(',')); // send line  
+            canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
+            undoStack.push(local_lines);
+            socket.emit('line_end');
             lastAction.push('draw');
-            //socket.emit('line_end');
-            
-        } else {
-            //socket.emit('recording');
-            //alert('((( RECORDING )))');
         }
     });
 
@@ -257,6 +260,7 @@ function onLoadCallback() {
         while(lines_to_draw.length > 0) { // Draw all lines in lines_to_draw
             var line_str = lines_to_draw.pop();
             var new_line = line_str.split(','); // new_line is in format color,x1,y1,x2,y2,x3,y3...
+            received_lines = new_line;
             context.strokeStyle = new_line[0]; // Color
             context.lineWidth = 5;
             context.moveTo(new_line[1] * canvas.width, new_line[2] * canvas.height);
@@ -271,13 +275,143 @@ function onLoadCallback() {
 
 clear.onclick = function() { socket.emit('clear'); };
 
-//undo.onclick = function() { socket.emit('undo'); };
+undo.onclick = function() { 
+    if(lastAction.length > 0 && (undoStack.length > 0 || localPins.length > 0)) { // Draw all lines in undoStack
+        
+        if(lastAction[lastAction.length - 1] == 'draw') {
+            undoStack.pop();
+        } else if(lastAction[lastAction.length - 1] == 'pin') {
+            localPins.pop();
+        }
+                
+        var new_line = [];
+        for(var i = 0; i < undoStack.length; i++) {
+            new_line.push(undoStack[i].split(','));
+        }
+        
+        clearCanvas();
+        
+        if(localPins.length > 0) {
+            for(var i = 0; i < localPins.length; i++) {
+                pinDrop(localPins[i].color, localPins[i].x, localPins[i].y);
+            }
+        }
+        
+        if(receivedPins.length > 0) {
+            for(var i = 0; i < receivedPins.length; i++) {
+                pinDrop(receivedPins[i].color, receivedPins[i].x, receivedPins[i].y);
+            }
+        }
+        
+        for(var i = 0; i < new_line.length; i++) {
+            context.strokeStyle = new_line[i][0]; // Color
+            context.lineWidth = 5;
+            context.moveTo(new_line[i][1] * canvas.width, new_line[i][2] * canvas.height);
+            context.beginPath();
+            for(var j = 3; j < new_line[i].length; j += 2) {
+                context.lineTo(new_line[i][j] * canvas.width, new_line[i][j + 1] * canvas.height);
+            }
+            context.stroke();
+        }
+        for(var i = 0; i < redrawLines.length; i++) {
+            context.strokeStyle = redrawLines[i][0]; // Color
+            context.lineWidth = 5;
+            context.moveTo(redrawLines[i][1] * canvas.width, redrawLines[i][2] * canvas.height);
+            context.beginPath();
+            for(var j = 3; j < redrawLines[i].length; j += 2) {
+                context.lineTo(redrawLines[i][j] * canvas.width, redrawLines[i][j + 1] * canvas.height);
+            }
+            context.stroke();
+        }
+        var evt = {
+            lines: new_line,
+            action: lastAction[lastAction.length - 1]
+        }
+        socket.emit('undo', evt);
+        lastAction.pop();
+    }
+};
 
-//redo.onclick = function() { socket.emit('redo'); };
+socket.on('undo', function(data) {
+    if(data.action == 'draw') {
+        redrawLines.pop();
+    } else if(data.action == 'pin') {
+        receivedPins.pop();
+    }
+    
+    clearCanvas();
+    
+    if(localPins.length > 0) {
+        for(var i = 0; i < localPins.length; i++) {
+            pinDrop(localPins[i].color, localPins[i].x, localPins[i].y);
+        }
+    }
+        
+    if(receivedPins.length > 0) {
+        for(var i = 0; i < receivedPins.length; i++) {
+            pinDrop(receivedPins[i].color, receivedPins[i].x, receivedPins[i].y);
+        }
+    }
+        
+    var new_line = data.lines;
+    
+    for(var i = 0; i < new_line.length; i++) {
+        context.strokeStyle = new_line[i][0]; // Color
+        context.lineWidth = 5;
+        context.moveTo(new_line[i][1] * canvas.width, new_line[i][2] * canvas.height);
+        context.beginPath();
+        for(var j = 3; j < new_line[i].length; j += 2) {
+            context.lineTo(new_line[i][j] * canvas.width, new_line[i][j + 1] * canvas.height);
+        }
+        context.stroke();
+    }
+    if(undoStack.length > 0) { // Draw all lines in undoStack
+        var redraw_lines = [];
+        for(var i = 0; i < undoStack.length; i++) {
+            redraw_lines.push(undoStack[i].split(','));
+        }
+        for(var i = 0; i < redraw_lines.length; i++) {
+            context.strokeStyle = redraw_lines[i][0]; // Color
+            context.lineWidth = 5;
+            context.moveTo(redraw_lines[i][1] * canvas.width, redraw_lines[i][2] * canvas.height);
+            context.beginPath();
+            for(var j = 3; j < redraw_lines[i].length; j += 2) {
+                context.lineTo(redraw_lines[i][j] * canvas.width, redraw_lines[i][j + 1] * canvas.height);
+            }
+            context.stroke();
+        }
+    }
+});
+
+//redo.onclick = function() { 
+//    //socket.emit('redo'); 
+//    if(redoStack.length > 0) { // Draw all lines in undoStack
+//        var new_line = [];
+//        undoStack.push(redoStack.pop());
+//        for(var i = redoStack.length; i >= 0; i--) {
+//            new_line.push(redoStack[i].split(','));
+//        }
+//        clearCanvas();
+//        for(var i = 0; i < new_line.length; i++) {
+//            context.strokeStyle = new_line[i][0]; // Color
+//            context.lineWidth = 5;
+//            context.moveTo(new_line[i][1] * canvas.width, new_line[i][2] * canvas.height);
+//            context.beginPath();
+//            for(var j = 3; j < new_line[i].length; j += 2) {
+//                context.lineTo(new_line[i][j] * canvas.width, new_line[i][j + 1] * canvas.height);
+//            }
+//            context.stroke();
+//        }
+//    }
+//};
 
 pin.onclick = function() { draw_bool = false; };
 
 draw.onclick = function() { draw_bool = true; };
+
+socket.on('line_end', function(data) {
+    redrawLines.push(received_lines);
+});
 
 socket.on('clear', clearCanvas);        
 
@@ -317,3 +451,11 @@ $(takePhoto).bind('change', function(e){
     };
     reader.readAsDataURL(data);
 });
+
+function detectNonAppleMobile() { 
+ if(navigator.userAgent.match(/Android/i) || navigator.userAgent.match(/webOS/i) || navigator.userAgent.match(/BlackBerry/i) || navigator.userAgent.match(/Windows Phone/i)) {
+    return true;
+  } else {
+    return false;
+  }
+}

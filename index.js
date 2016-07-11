@@ -29,7 +29,7 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('draw_line', line_coords);
         //temp = line_coords;
     });
-    socket.on('line_end', function(previous_line){
+    socket.on('line_end', function(data){
         //queue.lines.push(temp);
         //temp = [];
     });
@@ -45,46 +45,54 @@ io.on('connection', (socket) => {
        socket.broadcast.emit('recording'); 
     });
     
-    socket.on('undo', function(data) {
-        redoStack.push(queue.lines.pop());
-        
-        console.log('queue.lines[0] = ' + queue.lines[0]);
-        console.log('queue.lines[1] = ' + queue.lines[1]);
-        console.log('queue.lines[2] = ' + queue.lines[2]);
-
-        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
-        
-        console.log('redoStack[0] = ' + redoStack[0]);
-        console.log('redoStack[1] = ' + redoStack[1]);
-        console.log('redoStack[2] = ' + redoStack[2]);
-        
-        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
-        
-        if(queue.lines.length > 0) {
-            io.emit('redraw', queue);
-        }
+    socket.on('line_end', function(data) {
+       socket.broadcast.emit('line_end'); 
     });
     
-    socket.on('redo', function(data) {
-        
-        queue.lines.push(redoStack.pop());
-        
-        console.log('queue.lines[0] = ' + queue.lines[0]);
-        console.log('queue.lines[1] = ' + queue.lines[1]);
-        console.log('queue.lines[2] = ' + queue.lines[2]);
-
-        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');
-        
-        console.log('redoStack[0] = ' + redoStack[0]);
-        console.log('redoStack[1] = ' + redoStack[1]);
-        console.log('redoStack[2] = ' + redoStack[2]);
-        
-        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
-        
-        if(queue.lines.length > 0) {
-            io.emit('redraw', queue);
-        }
+    socket.on('undo', function(data) {
+       socket.broadcast.emit('undo', data); 
     });
+    
+//    socket.on('undo', function(data) {
+//        redoStack.push(queue.lines.pop());
+//        
+//        console.log('queue.lines[0] = ' + queue.lines[0]);
+//        console.log('queue.lines[1] = ' + queue.lines[1]);
+//        console.log('queue.lines[2] = ' + queue.lines[2]);
+//
+//        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
+//        
+//        console.log('redoStack[0] = ' + redoStack[0]);
+//        console.log('redoStack[1] = ' + redoStack[1]);
+//        console.log('redoStack[2] = ' + redoStack[2]);
+//        
+//        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
+//        
+//        if(queue.lines.length > 0) {
+//            io.emit('redraw', queue);
+//        }
+//    });
+    
+//    socket.on('redo', function(data) {
+//        
+//        queue.lines.push(redoStack.pop());
+//        
+//        console.log('queue.lines[0] = ' + queue.lines[0]);
+//        console.log('queue.lines[1] = ' + queue.lines[1]);
+//        console.log('queue.lines[2] = ' + queue.lines[2]);
+//
+//        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');
+//        
+//        console.log('redoStack[0] = ' + redoStack[0]);
+//        console.log('redoStack[1] = ' + redoStack[1]);
+//        console.log('redoStack[2] = ' + redoStack[2]);
+//        
+//        console.log('////////////////////////////////////////////////////////////////////////////////////////////////');        
+//        
+//        if(queue.lines.length > 0) {
+//            io.emit('redraw', queue);
+//        }
+//    });
 });
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
