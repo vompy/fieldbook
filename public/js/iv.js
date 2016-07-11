@@ -466,6 +466,14 @@ function clearCanvas() {
 }
 
 function image(base64Image) {
+    local_lines = [];
+    undoStack = [];
+    redoStack = [];
+    received_lines = [];
+    redrawLines = [];
+    localPins = []; 
+    receivedPins = [];
+    lastAction = [];
     $(cameraIcon).css('visibility', 'hidden');
     $(canvas).css('background-image', 'url(' + base64Image + ')');
     clearCanvas();

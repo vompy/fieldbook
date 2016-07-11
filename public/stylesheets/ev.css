@@ -56,29 +56,6 @@ EV CSS File
     display: inline-block;
 }
 
-/*
-#pin {
-    margin-top: 125px;
-}
-
-#draw {
-    margin-top: 50px;
-}
-
-#clear {
-    margin-top: 125px;
-}
-*/
-
-
-/*
-@media screen and (max-width: 625px) {
-    #controls {
-        width: 100px;
-    }
-}
-*/
-
 /* camera button styling only */
 #camera-upload {
     width: 200px;
