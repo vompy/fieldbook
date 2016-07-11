@@ -26,9 +26,9 @@ var draw_bool = true;
 var resizeTimer;
 context.imageSmoothingEnabled = false;
 var yellowPin_img = new Image();
-yellowPin_img.src = '../assets/yellow-circle.png';
+yellowPin_img.src = '../assets/yellow-pin.png';
 var bluePin_img = new Image();
-bluePin_img.src = '../assets/blue-circle.png';
+bluePin_img.src = '../assets/blue-pin.png';
 const ratio = 4/3;
 
 var local_lines = [];
@@ -51,11 +51,46 @@ window.onload = function() {
 }
 
 window.onresize = function() {
-    resize();
-//    clearTimeout(resizeTimer);
-//    resizeTimer = setTimeout(function() {
-//    socket.emit('redraw');
-//    }, 250);
+    resize();    
+    var new_line = [];
+    for(var i = 0; i < undoStack.length; i++) {
+        new_line.push(undoStack[i].split(','));
+    }
+
+    clearCanvas();
+
+    if(localPins.length > 0) {
+        for(var i = 0; i < localPins.length; i++) {
+            pinDrop(localPins[i].color, localPins[i].x, localPins[i].y);
+        }
+    }
+
+    if(receivedPins.length > 0) {
+        for(var i = 0; i < receivedPins.length; i++) {
+            pinDrop(receivedPins[i].color, receivedPins[i].x, receivedPins[i].y);
+        }
+    }
+
+    for(var i = 0; i < new_line.length; i++) {
+        context.strokeStyle = new_line[i][0]; // Color
+        context.lineWidth = 5;
+        context.moveTo(new_line[i][1] * canvas.width, new_line[i][2] * canvas.height);
+        context.beginPath();
+        for(var j = 3; j < new_line[i].length; j += 2) {
+            context.lineTo(new_line[i][j] * canvas.width, new_line[i][j + 1] * canvas.height);
+        }
+        context.stroke();
+    }
+    for(var i = 0; i < redrawLines.length; i++) {
+        context.strokeStyle = redrawLines[i][0]; // Color
+        context.lineWidth = 5;
+        context.moveTo(redrawLines[i][1] * canvas.width, redrawLines[i][2] * canvas.height);
+        context.beginPath();
+        for(var j = 3; j < redrawLines[i].length; j += 2) {
+            context.lineTo(redrawLines[i][j] * canvas.width, redrawLines[i][j + 1] * canvas.height);
+        }
+        context.stroke();
+    }
 }
 
 socket.on('redraw', function redraw(data) {
@@ -87,7 +122,7 @@ function pinDrop(color, x, y) {
     var width = canvas.width / 15;
     var height = width / pin_ratio;
     var left = x * canvas.width - width / 2;
-    var top = y * canvas.height - height / 2;
+    var top = y * canvas.height - height;
     context.drawImage(img, left, top, width, height);
 }
 
