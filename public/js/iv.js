@@ -1,6 +1,6 @@
 /*
 
-EV Javascript
+IV Javascript
 
 */
 
@@ -420,8 +420,8 @@ function image(base64Image) {
     clearCanvas();
     $(controls).css('visibility', 'visible');
     window.scrollTo(0,0);
-    //stopSpin();
-    //socket.emit('received');
+    stopSpin();
+    socket.emit('received');
 }
 
 $(cameraIcon).click(function() {
