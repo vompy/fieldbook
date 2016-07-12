@@ -423,6 +423,7 @@ socket.on('clear', clearCanvas);
 socket.on('image', image);
   
 function addListeners() {
+    console.log('listeners added');
     pin.addEventListener('click', drawFalse);
     draw.addEventListener('click', drawTrue);
     clear.addEventListener('click', clearAll);
@@ -453,11 +454,12 @@ function clearAll() {
 }
 
 function removeListeners() {
-    pin.addEventListener('click', drawFalse);
-    draw.addEventListener('click', drawTrue);
-    clear.addEventListener('click', clearAll);
-    undo.addEventListener('click', localRedraw);
-    newPhoto.addEventListener('click', cameraClick);
+    console.log('listeners removed');
+    pin.removeEventListener('click', drawFalse);
+    draw.removeEventListener('click', drawTrue);
+    clear.removeEventListener('click', clearAll);
+    undo.removeEventListener('click', localRedraw);
+    newPhoto.removeEventListener('click', cameraClick);
 }
 
 function clearCanvas() {
@@ -542,11 +544,13 @@ socket.on('received', stopSpin);
 function startSpin() {
     removeListeners();
     $(canvas).addClass('background');
+    $(controls).addClass('background');
     spinner.spin(container);
 }
 
 function stopSpin() {
     addListeners();
     $(canvas).removeClass('background');
+    $(controls).removeClass('background');
     spinner.stop();
 }

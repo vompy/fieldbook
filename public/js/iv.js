@@ -426,6 +426,7 @@ socket.on('image', image);
 socket.on('recording', function(data) { alert('((( RECORDING )))'); });
   
 function addListeners() {
+    console.log('listeners added');
     pin.addEventListener('click', drawFalse);
     draw.addEventListener('click', drawTrue);
     //clear.addEventListener('click', clearAll);
@@ -456,10 +457,11 @@ function clearAll() {
 }
 
 function removeListeners() {
-    pin.addEventListener('click', drawFalse);
-    draw.addEventListener('click', drawTrue);
+    console.log('listeners removed');
+    pin.removeEventListener('click', drawFalse);
+    draw.removeEventListener('click', drawTrue);
     //clear.addEventListener('click', clearAll);
-    undo.addEventListener('click', localRedraw);
+    undo.removeEventListener('click', localRedraw);
     //newPhoto.addEventListener('click', cameraClick);
 }
 
@@ -481,8 +483,8 @@ function image(base64Image) {
     clearCanvas();
     $(controls).css('visibility', 'visible');
     window.scrollTo(0,0);
-    stopSpin();
     socket.emit('received');
+    stopSpin();
 }
 
 $(cameraIcon).click(function() {
@@ -545,11 +547,13 @@ socket.on('received', stopSpin);
 function startSpin() {
     removeListeners();
     $(canvas).addClass('background');
+    $(controls).addClass('background');
     spinner.spin(container);
 }
 
 function stopSpin() {
     addListeners();
     $(canvas).removeClass('background');
+    $(controls).removeClass('background');
     spinner.stop();
 }
