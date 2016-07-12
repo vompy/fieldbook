@@ -427,8 +427,14 @@ socket.on('image', image);
 socket.on('recording', function(data) { alert('((( RECORDING )))'); });
   
 function addListeners() {
-    pin.addEventListener('click', function() { draw_bool = false; });
-    draw.addEventListener('click', function() { draw_bool = true; });
+     pin.addEventListener('click', function() { 
+        console.log('pin'); 
+        draw_bool = false; 
+    });
+    draw.addEventListener('click', function() { 
+        console.log('draw'); 
+        draw_bool = true; 
+    });
     clear.addEventListener('click', function() {
         if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
             lastAction.push('clear');
@@ -441,8 +447,14 @@ function addListeners() {
 }
 
 function removeListeners() {
-    pin.removeEventListener('click', function() { draw_bool = false; });
-    draw.removeEventListener('click', function() { draw_bool = true; });
+     pin.removeEventListener('click', function() { 
+        console.log('pin'); 
+        draw_bool = false; 
+    });
+    draw.removeEventListener('click', function() { 
+        console.log('draw'); 
+        draw_bool = true; 
+    });
     clear.removeEventListener('click', function() {
         if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
             lastAction.push('clear');
