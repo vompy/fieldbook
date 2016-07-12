@@ -56,6 +56,11 @@ EV CSS File
     display: inline-block;
 }
 
+.background {     
+    -webkit-filter: blur(5px);     
+    filter: blur(5px);      
+}
+
 /* camera button styling only */
 #camera-upload {
     width: 200px;

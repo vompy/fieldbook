@@ -44,7 +44,8 @@ var receivedPins = [];
 var lastAction = [];
 
 
-window.onload = function() {    
+window.onload = function() { 
+    addListeners();
     resize();
     onLoadCallback();
     
@@ -313,36 +314,28 @@ function onLoadCallback() {
     }, 10);
 }
 
-clear.onclick = function() { socket.emit('clear'); };
-
-undo.onclick = function() { 
+function localRedraw() {
     if(lastAction.length > 0 && (undoStack.length > 0 || localPins.length > 0)) { // Draw all lines in undoStack
-        
         if(lastAction[lastAction.length - 1] == 'draw') {
             undoStack.pop();
         } else if(lastAction[lastAction.length - 1] == 'pin') {
             localPins.pop();
-        }
-                
+        }     
         var new_line = [];
         for(var i = 0; i < undoStack.length; i++) {
             new_line.push(undoStack[i].split(','));
         }
-        
         clearCanvas();
-        
         if(localPins.length > 0) {
             for(var i = 0; i < localPins.length; i++) {
                 pinDrop(localPins[i].color, localPins[i].x, localPins[i].y);
             }
         }
-        
         if(receivedPins.length > 0) {
             for(var i = 0; i < receivedPins.length; i++) {
                 pinDrop(receivedPins[i].color, receivedPins[i].x, receivedPins[i].y);
             }
         }
-        
         for(var i = 0; i < new_line.length; i++) {
             context.strokeStyle = new_line[i][0]; // Color
             context.lineWidth = 5;
@@ -370,7 +363,7 @@ undo.onclick = function() {
         socket.emit('undo', evt);
         lastAction.pop();
     }
-};
+}
 
 socket.on('undo', function(data) {
     if(data.action == 'draw') {
@@ -423,10 +416,6 @@ socket.on('undo', function(data) {
     }
 });
 
-pin.onclick = function() { draw_bool = false; };
-
-draw.onclick = function() { draw_bool = true; };
-
 socket.on('line_end', function(data) {
     redrawLines.push(received_lines);
 });
@@ -436,17 +425,34 @@ socket.on('clear', clearCanvas);
 socket.on('image', image);
 
 socket.on('recording', function(data) { alert('((( RECORDING )))'); });
-     
-clear.addEventListener('click', function() {
-    if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
-        lastAction.push('clear');
-    }
-    socket.emit('clear');
-});
+  
+function addListeners() {
+    pin.addEventListener('click', function() { draw_bool = false; });
+    draw.addEventListener('click', function() { draw_bool = true; });
+    clear.addEventListener('click', function() {
+        if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
+            lastAction.push('clear');
+        }
+        clearCanvas();
+        socket.emit('clear');
+    });
+    undo.addEventListener('click', function() { localRedraw(); });
+    newPhoto.addEventListener('click', function() { $(psuedoIcon).click(); });
+}
 
- newPhoto.addEventListener('click', function() {
-    $(psuedoIcon).click();
-});
+function removeListeners() {
+    pin.removeEventListener('click', function() { draw_bool = false; });
+    draw.removeEventListener('click', function() { draw_bool = true; });
+    clear.removeEventListener('click', function() {
+        if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
+            lastAction.push('clear');
+        }
+        clearCanvas();
+        socket.emit('clear');
+    });
+    undo.removeEventListener('click', function() { localRedraw(); });
+    newPhoto.removeEventListener('click', function() { $(psuedoIcon).click(); });
+}
 
 function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);     
@@ -528,9 +534,13 @@ socket.on('incoming', startSpin);
 socket.on('received', stopSpin);
 
 function startSpin() {
+    removeListeners();
+    $(canvas).addClass('background');
     spinner.spin(container);
 }
 
 function stopSpin() {
+    addListeners();
+    $(canvas).removeClass('background');
     spinner.stop();
 }

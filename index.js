@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
         console.log('received');
     });
     socket.on('clear', function(data) {
-        io.emit('clear');
+        socket.broadcast.emit('clear');
     });
     socket.on('draw_line', function(line_coords) {
         socket.broadcast.emit('draw_line', line_coords);
