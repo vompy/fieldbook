@@ -203,19 +203,21 @@ function portraitResize() {
 }
             
 function startSavingLineCoords(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    if(detectNonAppleMobile()) {
-        context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
-        context.stroke();
-        line_coords.push([(e.touches[0].pageX - canvas.offsetLeft) / canvas.width, (e.touches[0].pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
-    } else {
-        context.lineTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)); // Draw line locally
-        context.stroke();
-        line_coords.push([(e.pageX - canvas.offsetLeft) / canvas.width, (e.pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
+    if(draw_bool) {
+        e.preventDefault();
+        e.stopPropagation();
+        if(detectNonAppleMobile()) {
+            context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
+            context.stroke();
+            line_coords.push([(e.touches[0].pageX - canvas.offsetLeft) / canvas.width, (e.touches[0].pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
+        } else {
+            context.lineTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)); // Draw line locally
+            context.stroke();
+            line_coords.push([(e.pageX - canvas.offsetLeft) / canvas.width, (e.pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
+        }
+        local_lines = line_color + ',' + line_coords.join(',');
+        socket.emit('draw_line', local_lines); // send line
     }
-    local_lines = line_color + ',' + line_coords.join(',');
-    socket.emit('draw_line', local_lines); // send line
 }
 
 function onLoadCallback() {
@@ -308,7 +310,7 @@ function onLoadCallback() {
             }
             context.stroke();
         }
-    }, 50);
+    }, 10);
 }
 
 clear.onclick = function() { socket.emit('clear'); };
@@ -421,28 +423,6 @@ socket.on('undo', function(data) {
     }
 });
 
-//redo.onclick = function() { 
-//    //socket.emit('redo'); 
-//    if(redoStack.length > 0) { // Draw all lines in undoStack
-//        var new_line = [];
-//        undoStack.push(redoStack.pop());
-//        for(var i = redoStack.length; i >= 0; i--) {
-//            new_line.push(redoStack[i].split(','));
-//        }
-//        clearCanvas();
-//        for(var i = 0; i < new_line.length; i++) {
-//            context.strokeStyle = new_line[i][0]; // Color
-//            context.lineWidth = 5;
-//            context.moveTo(new_line[i][1] * canvas.width, new_line[i][2] * canvas.height);
-//            context.beginPath();
-//            for(var j = 3; j < new_line[i].length; j += 2) {
-//                context.lineTo(new_line[i][j] * canvas.width, new_line[i][j + 1] * canvas.height);
-//            }
-//            context.stroke();
-//        }
-//    }
-//};
-
 pin.onclick = function() { draw_bool = false; };
 
 draw.onclick = function() { draw_bool = true; };
@@ -486,6 +466,8 @@ function image(base64Image) {
     clearCanvas();
     $(controls).css('visibility', 'visible');
     window.scrollTo(0,0);
+    //stopSpin();
+    //socket.emit('received');
 }
 
 $(cameraIcon).click(function() {
@@ -493,6 +475,7 @@ $(cameraIcon).click(function() {
 });
 
 $(takePhoto).bind('change', function(e){
+    socket.emit('incoming');
     var data = e.originalEvent.target.files[0];
     var reader = new FileReader();
     reader.onload = function(evt) {
@@ -500,6 +483,7 @@ $(takePhoto).bind('change', function(e){
         socket.emit('image', evt.target.result);
     };
     reader.readAsDataURL(data);
+    startSpin();
 });
 
 function detectNonAppleMobile() { 
@@ -513,4 +497,40 @@ function detectNonAppleMobile() {
 document.ontouchmove = function(e) {
     e.preventDefault();    
     e.stopPropagation();
+}
+
+var opts = {
+  lines: 13 // The number of lines to draw
+, length: 28 // The length of each line
+, width: 14 // The line thickness
+, radius: 42 // The radius of the inner circle
+, scale: 1 // Scales overall size of the spinner
+, corners: 1 // Corner roundness (0..1)
+, color: '#000' // #rgb or #rrggbb or array of colors
+, opacity: 0.25 // Opacity of the lines
+, rotate: 0 // The rotation offset
+, direction: 1 // 1: clockwise, -1: counterclockwise
+, speed: 1 // Rounds per second
+, trail: 60 // Afterglow percentage
+, fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+, zIndex: 2e9 // The z-index (defaults to 2000000000)
+, className: 'spinner' // The CSS class to assign to the spinner
+, top: '50%' // Top position relative to parent
+, left: '50%' // Left position relative to parent
+, shadow: false // Whether to render a shadow
+, hwaccel: false // Whether to use hardware acceleration
+, position: 'absolute' // Element positioning
+};
+var spinner = new Spinner(opts);
+
+socket.on('incoming', startSpin);
+
+socket.on('received', stopSpin);
+
+function startSpin() {
+    spinner.spin(container);
+}
+
+function stopSpin() {
+    spinner.stop();
 }
