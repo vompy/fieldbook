@@ -15,7 +15,7 @@ var container = document.getElementById('container');
 var controls = document.getElementById('controls');
 var newPhoto = document.getElementById('photo');
 var buttons = document.getElementById('buttons');
-//var undo = document.getElementById('undo');
+var undo = document.getElementById('undo');
 //var redo = document.getElementById('redo');
 var pin = document.getElementById('pin');
 var draw = document.getElementById('draw');
@@ -426,43 +426,41 @@ socket.on('image', image);
 socket.on('recording', function(data) { alert('((( RECORDING )))'); });
   
 function addListeners() {
-     pin.addEventListener('click', function() { 
-        console.log('pin'); 
-        draw_bool = false; 
-    });
-    draw.addEventListener('click', function() { 
-        console.log('draw'); 
-        draw_bool = true; 
-    });
-//    clear.addEventListener('click', function() {
-//        if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
-//            lastAction.push('clear');
-//        }
-//        clearCanvas();
-//        socket.emit('clear');
-//    });
-    undo.addEventListener('click', function() { localRedraw(); });
-//    newPhoto.addEventListener('click', function() { $(psuedoIcon).click(); });
+    pin.addEventListener('click', drawFalse);
+    draw.addEventListener('click', drawTrue);
+    //clear.addEventListener('click', clearAll);
+    undo.addEventListener('click', localRedraw);
+    //newPhoto.addEventListener('click', cameraClick);
+}
+
+function drawTrue() {
+    draw_bool = true;
+    console.log(draw_bool);
+}
+
+function drawFalse() {
+    draw_bool = false;
+    console.log(draw_bool);
+}
+
+function cameraClick() {
+    $(psuedoIcon).click(); 
+}
+
+function clearAll() {
+    if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
+            lastAction.push('clear');
+        }
+        clearCanvas();
+        socket.emit('clear');
 }
 
 function removeListeners() {
-    pin.removeEventListener('click', function() { 
-        console.log('pin'); 
-        draw_bool = false; 
-    });
-    draw.removeEventListener('click', function() { 
-        console.log('draw'); 
-        draw_bool = true; 
-    });
-//    clear.removeEventListener('click', function() {
-//        if(lastAction.length > 0 && lastAction[lastAction.length - 1] != 'clear') {
-//            lastAction.push('clear');
-//        }
-//        clearCanvas();
-//        socket.emit('clear');
-//    });
-    undo.removeEventListener('click', function() { localRedraw(); });
-//    newPhoto.removeEventListener('click', function() { $(psuedoIcon).click(); });
+    pin.addEventListener('click', drawFalse);
+    draw.addEventListener('click', drawTrue);
+    //clear.addEventListener('click', clearAll);
+    undo.addEventListener('click', localRedraw);
+    //newPhoto.addEventListener('click', cameraClick);
 }
 
 function clearCanvas() {
@@ -488,7 +486,7 @@ function image(base64Image) {
 }
 
 $(cameraIcon).click(function() {
-    $(psuedoIcon).click(); 
+    cameraClick();
 });
 
 $(takePhoto).bind('change', function(e){
