@@ -485,6 +485,8 @@ function startSpin() {
     removeListeners();
     $(canvas).addClass('background');
     $(controls).addClass('background');
+    $('.loading').removeClass('hidden');
+    $('.loading').addClass('visible');
     spinner.spin(container);
 }
 
@@ -492,6 +494,8 @@ function stopSpin() {
     addListeners();
     $(canvas).removeClass('background');
     $(controls).removeClass('background');
+    $('.loading').removeClass('visible');
+    $('.loading').addClass('hidden');
     spinner.stop();
 }
 

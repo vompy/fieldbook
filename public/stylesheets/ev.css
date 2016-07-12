@@ -56,6 +56,30 @@ EV CSS File
     display: inline-block;
 }
 
+.loading {
+    text-align: center;
+    font-family: 'open sans';
+    font-size: 1.5em;
+    color: #FFF; 
+    opacity: 0.75;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: -70px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.visible {
+    visibility: visible;
+}
+
 .background {     
     -webkit-filter: blur(5px);     
     filter: blur(5px);      
@@ -71,7 +95,6 @@ EV CSS File
     left: 0;
     right: 0;
     margin: auto;
-    
     visibility: hidden;
 }
 
