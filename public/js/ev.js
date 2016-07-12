@@ -32,6 +32,8 @@ var bluePin_img = new Image();
 bluePin_img.src = '../assets/blue-pin.png';
 const ratio = 4/3;
 
+var drawing = false;
+
 var local_lines = [];
 var undoStack = [];
 var redoStack = [];
@@ -220,80 +222,6 @@ function startSavingLineCoords(e) {
 }
 
 function onLoadCallback() {
-    // bool that tells whether drawing is happening 
-    var drawing = false;
-
-    socket.on('draw_line', function(line) { 
-        lines_to_draw.push(line); // Push recieved line in lines_to_draw
-    });
-    
-    // mouse events
-    canvas.addEventListener('mousedown', function(e) {
-        if(draw_bool) {
-            drawing = true;
-            line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
-            context.strokeStyle = line_color;
-            context.lineWidth = 5;
-            context.beginPath(); // Start drawing locally
-            context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
-            canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
-        } else {
-            var pinpoint = {
-                x: (e.pageX - canvas.offsetLeft) / canvas.width,
-                y: (e.pageY - canvas.offsetTop) / canvas.height,
-                color: 'yellow'
-            };
-            pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
-            localPins.push(pinpoint);
-            socket.emit('pin_drop', pinpoint);
-            lastAction.push('pin');
-        }
-    });
-    canvas.addEventListener('mouseup', function(e) {
-        if(draw_bool) {
-            drawing = false;
-            canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
-            undoStack.push(local_lines);
-            socket.emit('line_end');
-            lastAction.push('draw');
-        }
-    });
-    // touch events
-    canvas.addEventListener('touchstart', function(e) {
-        if(draw_bool) {
-            e.preventDefault();
-            e.stopPropagation();
-            drawing = true;
-            line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
-            context.strokeStyle = line_color;
-            context.lineWidth = 5;
-            context.beginPath(); // Start drawing locally
-            context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
-            canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
-        } else {
-            var pinpoint = {
-                x: (e.pageX - canvas.offsetLeft) / canvas.width,
-                y: (e.pageY - canvas.offsetTop) / canvas.height,
-                color: 'yellow'
-            };
-            pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
-            localPins.push(pinpoint);
-            socket.emit('pin_drop', pinpoint);
-            lastAction.push('pin');
-        }
-    });
-    canvas.addEventListener('touchend', function(e) {
-        if(draw_bool) {
-            e.preventDefault();
-            e.stopPropagation();
-            drawing = false;
-            canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
-            undoStack.push(local_lines);
-            socket.emit('line_end');
-            lastAction.push('draw');
-        }
-    });
-
     setInterval(function() { // Every 50 ms draw all lines in lines_to_draw
         if(drawing) return; // wait for user to stop drawing line
         while(lines_to_draw.length > 0) { // Draw all lines in lines_to_draw
@@ -414,6 +342,10 @@ socket.on('undo', function(data) {
     }
 });
 
+socket.on('draw_line', function(line) { 
+    lines_to_draw.push(line); // Push recieved line in lines_to_draw
+});
+
 socket.on('line_end', function(data) {
     redrawLines.push(received_lines);
 });
@@ -429,6 +361,10 @@ function addListeners() {
     clear.addEventListener('click', clearAll);
     undo.addEventListener('click', localRedraw);
     newPhoto.addEventListener('click', cameraClick);
+    canvas.addEventListener('mousedown', mousedown);  
+    canvas.addEventListener('mouseup', mouseup);
+    canvas.addEventListener('touchstart', touchstart);
+    canvas.addEventListener('touchend', touchend);
 }
 
 function drawTrue() {
@@ -460,6 +396,10 @@ function removeListeners() {
     clear.removeEventListener('click', clearAll);
     undo.removeEventListener('click', localRedraw);
     newPhoto.removeEventListener('click', cameraClick);
+    canvas.removeEventListener('mousedown', mousedown);  
+    canvas.removeEventListener('mouseup', mouseup);
+    canvas.removeEventListener('touchstart', touchstart);
+    canvas.removeEventListener('touchend', touchend);
 }
 
 function clearCanvas() {
@@ -553,4 +493,72 @@ function stopSpin() {
     $(canvas).removeClass('background');
     $(controls).removeClass('background');
     spinner.stop();
+}
+
+function mousedown(e) {
+    if(draw_bool) {
+        drawing = true;
+        line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
+        context.strokeStyle = line_color;
+        context.lineWidth = 5;
+        context.beginPath(); // Start drawing locally
+        context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
+        canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
+    } else {
+        var pinpoint = {
+            x: (e.pageX - canvas.offsetLeft) / canvas.width,
+            y: (e.pageY - canvas.offsetTop) / canvas.height,
+            color: 'yellow'
+        };
+        pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+        localPins.push(pinpoint);
+        socket.emit('pin_drop', pinpoint);
+        lastAction.push('pin');
+    }
+}
+
+function mouseup() {
+    if(draw_bool) {
+        drawing = false;
+        canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
+        undoStack.push(local_lines);
+        socket.emit('line_end');
+        lastAction.push('draw');
+    }
+}
+
+function touchstart(e) {
+    if(draw_bool) {
+        drawing = true;
+        e.preventDefault();
+        e.stopPropagation();
+        line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
+        context.strokeStyle = line_color;
+        context.lineWidth = 5;
+        context.beginPath(); // Start drawing locally
+        context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
+        canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
+    } else {
+        var pinpoint = {
+            x: (e.pageX - canvas.offsetLeft) / canvas.width,
+            y: (e.pageY - canvas.offsetTop) / canvas.height,
+            color: 'yellow'
+        };
+        pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+        localPins.push(pinpoint);
+        socket.emit('pin_drop', pinpoint);
+        lastAction.push('pin');
+    }
+}
+
+function touchend(e) {
+    if(draw_bool) {
+        drawing = false;
+        e.preventDefault();
+        e.stopPropagation();
+        canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
+        undoStack.push(local_lines);
+        socket.emit('line_end');
+        lastAction.push('draw');
+    }
 }
