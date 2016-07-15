@@ -24,7 +24,6 @@ var lines_to_draw = []; // Array of recieved lines to draw
 var line_coords = []; // Array of local lines to be sent
 var line_color = '#7FB2F0';
 var draw_bool = true;
-var resizeTimer;
 context.imageSmoothingEnabled = false;
 var yellowPin_img = new Image();
 yellowPin_img.src = '../assets/yellow-pin.png';
@@ -46,7 +45,7 @@ var receivedPins = [];
 var lastAction = [];
 
 
-window.onload = function() { 
+window.onload = function() {
     addListeners();
     resize();
     onLoadCallback();
@@ -407,6 +406,7 @@ function clearCanvas() {
 }
 
 function image(base64Image) {
+    console.log('incoming image');
     local_lines = [];
     undoStack = [];
     redoStack = [];

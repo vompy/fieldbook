@@ -10,7 +10,6 @@ var clear = document.getElementById('clear');
 var context = canvas.getContext('2d');
 var socket = io.connect();
 var takePhoto = document.getElementById('img-file');
-var cameraIcon = document.getElementById('camera-upload');
 var psuedoIcon = document.getElementById('label');
 var container = document.getElementById('container');
 var controls = document.getElementById('controls');
@@ -24,7 +23,6 @@ var lines_to_draw = []; // Array of recieved lines to draw
 var line_coords = []; // Array of local lines to be sent
 var line_color = '#FFF5A6';
 var draw_bool = true;
-var resizeTimer;
 context.imageSmoothingEnabled = false;
 var yellowPin_img = new Image();
 yellowPin_img.src = '../assets/yellow-pin.png';
@@ -47,9 +45,9 @@ var lastAction = [];
 
 
 window.onload = function() { 
-    addListeners();
+    addButtonListeners();
     resize();
-    onLoadCallback();
+    incomingLines();
 }
 
 window.onresize = function() {
@@ -221,7 +219,7 @@ function startSavingLineCoords(e) {
     }
 }
 
-function onLoadCallback() {
+function incomingLines() {
     setInterval(function() { // Every 50 ms draw all lines in lines_to_draw
         if(drawing) return; // wait for user to stop drawing line
         while(lines_to_draw.length > 0) { // Draw all lines in lines_to_draw
@@ -354,13 +352,15 @@ socket.on('clear', clearCanvas);
 
 socket.on('image', image);
   
-function addListeners() {
-    console.log('listeners added');
+function addButtonListeners() {
     pin.addEventListener('click', drawFalse);
     draw.addEventListener('click', drawTrue);
     clear.addEventListener('click', clearAll);
     undo.addEventListener('click', localRedraw);
     newPhoto.addEventListener('click', cameraClick);
+}
+
+function addCanvasListeners() {
     canvas.addEventListener('mousedown', mousedown);  
     canvas.addEventListener('mouseup', mouseup);
     canvas.addEventListener('touchstart', touchstart);
@@ -389,13 +389,15 @@ function clearAll() {
         socket.emit('clear');
 }
 
-function removeListeners() {
-    console.log('listeners removed');
+function removeButtonListeners() {
     pin.removeEventListener('click', drawFalse);
     draw.removeEventListener('click', drawTrue);
     clear.removeEventListener('click', clearAll);
     undo.removeEventListener('click', localRedraw);
     newPhoto.removeEventListener('click', cameraClick);
+}
+
+function removeCanvasListeners() {
     canvas.removeEventListener('mousedown', mousedown);  
     canvas.removeEventListener('mouseup', mouseup);
     canvas.removeEventListener('touchstart', touchstart);
@@ -415,18 +417,13 @@ function image(base64Image) {
     localPins = []; 
     receivedPins = [];
     lastAction = [];
-    $(cameraIcon).css('visibility', 'hidden');
     $(canvas).css('background-image', 'url(' + base64Image + ')');
     clearCanvas();
     $(controls).css('visibility', 'visible');
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     //stopSpin();
     //socket.emit('received');
 }
-
-$(cameraIcon).click(function() {
-    cameraClick();
-});
 
 $(takePhoto).bind('change', function(e){
     socket.emit('incoming');
@@ -482,7 +479,8 @@ socket.on('incoming', startSpin);
 socket.on('received', stopSpin);
 
 function startSpin() {
-    removeListeners();
+    removeButtonListeners();
+    removeCanvasListeners();
     $(canvas).addClass('background');
     $(controls).addClass('background');
     $('.loading').removeClass('hidden');
@@ -491,7 +489,8 @@ function startSpin() {
 }
 
 function stopSpin() {
-    addListeners();
+    addButtonListeners();
+    addCanvasListeners();
     $(canvas).removeClass('background');
     $(controls).removeClass('background');
     $('.loading').removeClass('visible');

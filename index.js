@@ -9,18 +9,25 @@ var server = app.listen(process.env.PORT || 3000);
 var io = socket.listen(server);
 var config = {};
 
+var images = [];
+
 io.on('connection', (socket) => {
-    console.log('Client connected');
-    socket.on('disconnect', () => console.log('Client disconnected'));
+    console.log('Client ' + socket.id + ' connected.');
+    if(images.length > 0) {
+        socket.join('new');
+        io.in('new').emit('image', images[images.length - 1]);
+        socket.leave('new');
+    }
+    socket.on('disconnect', () => console.log('Client ' + socket.id + ' disconnected.'));
     socket.on('incoming', function(data) {
        socket.broadcast.emit('incoming'); 
     });
     socket.on('image', function(image) {
+        images.push(image);
         socket.broadcast.emit('image', image);
     });
     socket.on('received', function(data) {
         socket.broadcast.emit('received');
-        console.log('received');
     });
     socket.on('clear', function(data) {
         socket.broadcast.emit('clear');
@@ -37,7 +44,6 @@ io.on('connection', (socket) => {
     socket.on('undo', function(data) {
        socket.broadcast.emit('undo', data); 
     });
-    
 });
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);

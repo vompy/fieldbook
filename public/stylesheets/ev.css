@@ -1,5 +1,5 @@
 /*
-EV CSS File
+stylesheet
 */
 
 #container {
@@ -45,6 +45,22 @@ EV CSS File
 #buttons {
     text-align: center;
 }
+
+
+.first {
+    display: block;
+}
+
+.second {
+    display: block;
+}
+
+.third {
+    display: block;
+    position: absolute;
+    bottom: 0;
+}
+
 
 .buttons-landscape {
     margin: 10px auto;
