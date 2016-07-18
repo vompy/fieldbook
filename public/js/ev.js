@@ -123,6 +123,7 @@ function roleSelection() {
     $(role_container).fadeOut(fadeTimer);
     role = this.id;
     setupControls();
+    socket.emit('role', role);
     setTimeout(function() {
         $(container).fadeIn(fadeTimer);
         resize();

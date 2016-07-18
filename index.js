@@ -10,6 +10,10 @@ var io = socket.listen(server);
 var config = {};
 
 var images = [];
+var ev = 0;
+var iv = 0;
+
+var player = 0;
 
 io.on('connection', (socket) => {
     console.log('Client ' + socket.id + ' connected.');
@@ -18,7 +22,20 @@ io.on('connection', (socket) => {
         io.in('new').emit('image', images[images.length - 1]);
         socket.leave('new');
     }
-    socket.on('disconnect', () => console.log('Client ' + socket.id + ' disconnected.'));
+    socket.on('disconnect', () => {
+        console.log('Client ' + socket.id + ' disconnected.');
+        if(player > 0) {
+            player--;
+            console.log('players: ' + player);
+        }
+        if(player === 0) {
+            images = [];
+        }
+    });
+    socket.on('role', function(data) {
+        player++;
+        console.log('players: ' + player);
+    });
     socket.on('incoming', function(data) {
        socket.broadcast.emit('incoming'); 
     });
