@@ -75,6 +75,7 @@ socket.on('undo', function(data) {
     if(data.action === 'draw') {
         received_lines.pop();
     } else if(data.action === 'pin') {
+        counter--;
         received_pins.pop();
     }    
     redrawAll();
@@ -254,6 +255,7 @@ function localRedraw() {
         if(lastAction[lastAction.length - 1] === 'draw') {
             undoStack.pop();
         } else if(lastAction[lastAction.length - 1] === 'pin') {
+            counter--;
             local_pins.pop();
         }
         var event = {

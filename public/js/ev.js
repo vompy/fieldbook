@@ -18,10 +18,13 @@ var buttons = document.getElementById('buttons');
 var undo = document.getElementById('undo');
 var pin = document.getElementById('pin');
 var draw = document.getElementById('draw');
-var loading = document.getElementsByClassName('loading');
+var loading = document.getElementById('loading');
 
-var line_color = '#ED1C24';
+var inner_lineColor = '#ED1C24';
+var outer_lineColor = '#FFF';
 var pin_color = 'red';
+
+var inner_lineWidth = 5;
 
 var redPin_img = new Image();
 redPin_img.src = '../assets/red-pin.png';
@@ -49,7 +52,8 @@ var redoStack = [];
 
 var lastAction = [];
 
-var opts = { lines: 13, length: 28, width: 14, radius: 42, scale: 1, corners: 1, color: '#000', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute' };
+var opts = { lines: 13, length: 13, width: 6, radius: 19, scale: 1, corners: 1, color: '#000', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute' };
+
 var spinner = new Spinner(opts);
 
 var role_container = document.getElementById('selection-container');
@@ -75,7 +79,7 @@ socket.on('draw_line', function(line) {
     lines_to_draw.push(line);
 });
 
-socket.on('line_end', function(data) {
+socket.on('line_end', function() {
     received_lines.push(received_line_coords);
 });
 
@@ -83,6 +87,7 @@ socket.on('undo', function(data) {
     if(data.action === 'draw') {
         received_lines.pop();
     } else if(data.action === 'pin') {
+        counter--;
         received_pins.pop();
     }    
     redrawAll();
@@ -134,25 +139,27 @@ function roleSelection() {
 
 function setupIVControls() {
     if(role === 'iv') {
-        line_color = '#29ABE2';
+        inner_lineColor = '#29ABE2';
         pin_color = 'blue';
         $(newPhoto).addClass('hidden');
-        $(pin).attr("src", "/assets/blue-pin.png");
-        $(draw).attr("src", "/assets/blue-scribble.png");
+        $(pin).attr('src', '/assets/blue-pin.png');
+        $(draw).attr('src', '/assets/blue-scribble.png');
         $(loading).children().remove();
-        $(loading).append('<p>receiving photo</p>');
+        $(loading).append('<p id="message">receiving photo</p>');
     }
 }
 
 window.onload = function() { 
     resize();
+    setupLoadingContainer();
     addButtonListeners();
     addCanvasListeners();
     incomingLines();
 }
 
 window.onresize = function() {
-    resize();    
+    resize();
+    setupLoadingContainer();
     redrawAll();
 }
 
@@ -168,6 +175,7 @@ function pinDrop(letter, color, x, y) {
     var height = width / pin_ratio;
     var left = x * canvas.width - width / 2;
     var top = y * canvas.height - height;
+    context.shadowBlur = 0;
     context.drawImage(img, left, top, width, height);
     var font_size = width / 2;
     context.font = font_size + 'px Myriad Pro';
@@ -253,9 +261,9 @@ function portraitResize() {
 }
             
 function startSavingLineCoords(e) {
+    e.preventDefault();
+    e.stopPropagation();
     if(draw_bool) {
-        e.preventDefault();
-        e.stopPropagation();
         if(detectNonAppleMobile()) {
             context.lineTo((e.touches[0].pageX - canvas.offsetLeft), (e.touches[0].pageY - canvas.offsetTop)); // Draw line locally
             context.stroke();
@@ -265,7 +273,7 @@ function startSavingLineCoords(e) {
             context.stroke();
             local_line_coords.push([(e.pageX - canvas.offsetLeft) / canvas.width, (e.pageY - canvas.offsetTop) / canvas.height]); // Add coords to be sent
         }
-        local_lines = line_color + ',' + local_line_coords.join(',');
+        local_lines = inner_lineColor + ',' + local_line_coords.join(',');
         socket.emit('draw_line', local_lines); // send line
     }
 }
@@ -277,8 +285,7 @@ function incomingLines() {
             var line_str = lines_to_draw.pop();
             var line_coords = line_str.split(','); // new_line is in format color,x1,y1,x2,y2,x3,y3...
             received_line_coords = line_coords;
-            context.strokeStyle = line_coords[0]; // Color
-            context.lineWidth = 5;
+            contextSettings(line_coords[0], inner_lineWidth);
             context.moveTo(line_coords[1] * canvas.width, line_coords[2] * canvas.height);
             context.beginPath();
             for(var i = 3; i < line_coords.length; i += 2) {
@@ -294,6 +301,7 @@ function localRedraw() {
         if(lastAction[lastAction.length - 1] === 'draw') {
             undoStack.pop();
         } else if(lastAction[lastAction.length - 1] === 'pin') {
+            counter--;
             local_pins.pop();
         }
         var event = {
@@ -332,26 +340,25 @@ function coordsToLines(array) {
 
 function redrawLines(lines) {
     for(var i = 0; i < lines.length; i++) {
-        context.strokeStyle = lines[i][0]; // Color
-        context.lineWidth = 5;
+        contextSettings(lines[i][0], inner_lineWidth);
         context.moveTo(lines[i][1] * canvas.width, lines[i][2] * canvas.height);
         context.beginPath();
         for(var j = 3; j < lines[i].length; j += 2) {
             context.lineTo(lines[i][j] * canvas.width, lines[i][j + 1] * canvas.height);
+            context.stroke();
         }
-        context.stroke();
     }
     return lines;
 }
 
 function redrawAll() {
     clearCanvas();
-    redrawLocalPins();
-    redrawReceivedPins();
     if(undoStack.length > 0) { // Draw all lines in undoStack
         redrawLines(coordsToLines(undoStack));
     }
     redrawLines(received_lines);
+    redrawLocalPins();
+    redrawReceivedPins();
 }
 
 function drawTrue() {
@@ -398,9 +405,9 @@ function image(base64Image) {
 }
 
 function toLetters(num) {
-    var mod = num % 26,
-        pow = num / 26 | 0,
-        out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
+    var mod = num % 26;
+    var pow = num / 26 | 0;
+    var out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
     return pow ? toLetters(pow) + out : out;
 }
 
@@ -430,13 +437,13 @@ document.ontouchmove = function(e) {
 }
 
 function startSpin() {
+    spinner.spin(loading);
     removeButtonListeners();
     removeCanvasListeners();
     $(canvas).addClass('background');
     $(controls).addClass('background');
     $(loading).removeClass('hidden');
     $(loading).addClass('visible');
-    spinner.spin(container);
 }
 
 function stopSpin() {
@@ -447,16 +454,15 @@ function stopSpin() {
     $(loading).removeClass('visible');
     $(loading).addClass('hidden');
     spinner.stop();
+    if(role === 'ev') {
+        animateCheckmark();
+    }
 }
 
 function mousedown(e) {
     if(draw_bool) {
         drawing = true;
-        local_line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
-        context.strokeStyle = line_color;
-        context.lineWidth = 5;
-        context.beginPath(); // Start drawing locally
-        context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
+        startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);     
         canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
     } else {
         counter++;
@@ -484,16 +490,13 @@ function mouseup() {
 }
 
 function touchstart(e) {
+    e.preventDefault();
+    e.stopPropagation();
     if(draw_bool) {
         drawing = true;
-        e.preventDefault();
-        e.stopPropagation();
-        local_line_coords = [[(e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop)]]; // Starting coords for new line
-        context.strokeStyle = line_color;
-        context.lineWidth = 5;
-        context.beginPath(); // Start drawing locally
-        context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
+        startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);        
         canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
+    
     } else {
         counter++;
         var pinpoint = {
@@ -510,13 +513,60 @@ function touchstart(e) {
 }
 
 function touchend(e) {
+    e.preventDefault();
+    e.stopPropagation();
     if(draw_bool) {
         drawing = false;
-        e.preventDefault();
-        e.stopPropagation();
         canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
         undoStack.push(local_lines);
         socket.emit('line_end');
         lastAction.push('draw');
     }
+}
+
+function startDrawingLine(x, y, width, color) {
+    local_line_coords = [[(x - canvas.offsetLeft), (y - canvas.offsetTop)]]; // Starting coords for new line
+    contextSettings(color, width);
+    context.beginPath(); // Start drawing locally
+    context.moveTo((x - canvas.offsetLeft), (y - canvas.offsetTop));
+}
+
+function contextSettings(color, width) {
+    context.strokeStyle = color;
+    context.lineWidth = width;
+    context.lineJoin = 'round';
+    context.lineCap = 'round';
+    context.shadowBlur = 1;
+    context.shadowColor = '#FFF';   
+}
+
+function setupLoadingContainer() {
+    $(loading).css({
+        top: canvas.offsetTop + 'px',
+        left: canvas.offsetLeft + 'px',
+        height: canvas.height + 'px',
+        width: canvas.width + 'px'
+    });
+    $('#message').css({
+        top: canvas.height / 2 + opts.radius * 2 + 'px'
+    });
+}
+
+var circle = document.getElementById('circle');
+var polyline = document.getElementById('polyline');
+var checkmark = document.getElementById('checkmark');
+
+
+function animateCheckmark() {
+    $(checkmark).css({
+        visibility: 'visible'
+    });
+    $(circle).css({
+        animation: 'dash 2s ease-in-out',
+        '-webkit-animation': 'dash 2s ease-in-out'
+    });
+    $(polyline).css({
+        animation: 'dash 2s ease-in-out',
+        '-webkit-animation': 'dash 2s ease-in-out'
+    });
 }

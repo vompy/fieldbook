@@ -5,7 +5,6 @@ stylesheet
 #container {
     width: auto;
     height: 100vh;
-    padding: 5px;
     display: none;
 }
 
@@ -14,7 +13,6 @@ stylesheet
     width: 150px;
     display: inline-block;
     float: left;
-    background-color: #D8D8D8;
 }
 
 .controls-portrait {
@@ -22,7 +20,6 @@ stylesheet
     width: 100%;
     display: inline-block;
     float: left;
-    background-color: #D8D8D8;
 }
 
 .canvas-landscape {
@@ -31,7 +28,6 @@ stylesheet
     background-repeat: no-repeat;
     display: inline-block;
     float: left;
-    background-color: #B8B8B8;
 }
 
 .canvas-portrait {
@@ -40,7 +36,6 @@ stylesheet
     background-repeat: no-repeat;
     display: inline-block;
     float:left;
-    background-color: #B8B8B8;  
 }
 
 #buttons {
@@ -57,20 +52,19 @@ stylesheet
     display: inline-block;
 }
 
-.loading {
+#loading {
     text-align: center;
-    font-family: 'open sans';
-    font-size: 1.5em;
-    color: #FFF; 
+    font-family: 'Myriad Pro';
+    font-size: 1.0em;
+    color: #000; 
     opacity: 0.75;
-    width: 200px;
-    height: 200px;
     position: absolute;
-    top: -70px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
+}
+
+#message {
+    position: relative;
+    top: 100px;
+    display: inline-block;
 }
 
 .hidden {
@@ -130,4 +124,26 @@ stylesheet
 	overflow: hidden;
 	position: absolute;
 	z-index: -1;
+}
+
+.checkmark {
+    width: 220px;
+    margin: 0 auto;
+    padding-top: 40px;
+    visibility: hidden;
+}
+
+.path-animate {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+}
+
+@-webkit-keyframes dash {
+    0% { stroke-dashoffset: 1000; }
+    100% { stroke-dashoffset: 0; }
+}
+
+@keyframes dash {
+    0% { stroke-dashoffset: 1000; }
+    100% { stroke-dashoffset: 0; }
 }
