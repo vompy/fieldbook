@@ -496,9 +496,9 @@ function mouseup() {
 }
 
 function touchstart(e) {
-    e.preventDefault();
-    e.stopPropagation();
     if(draw_bool) {
+        e.preventDefault();
+        e.stopPropagation();
         drawing = true;
         startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);        
         canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
@@ -519,9 +519,9 @@ function touchstart(e) {
 }
 
 function touchend(e) {
-    e.preventDefault();
-    e.stopPropagation();
     if(draw_bool) {
+        e.preventDefault();
+        e.stopPropagation();
         drawing = false;
         canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
         undoStack.push(local_lines);
@@ -584,4 +584,5 @@ function animateCheckmark() {
             '-webkit-animation': ''
         });
     }, 1500);
+    //$(topDiv).addClass('hidden'); 
 }
