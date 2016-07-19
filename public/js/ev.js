@@ -11,14 +11,15 @@ var context = canvas.getContext('2d');
 var socket = io.connect();
 var takePhoto = document.getElementById('img-file');
 var psuedoIcon = document.getElementById('label');
-var container = document.getElementById('container');
+var container = document.getElementById('canvas-container');
 var controls = document.getElementById('controls');
 var newPhoto = document.getElementById('photo');
 var buttons = document.getElementById('buttons');
 var undo = document.getElementById('undo');
 var pin = document.getElementById('pin');
 var draw = document.getElementById('draw');
-var loading = document.getElementById('loading');
+var loading = document.getElementById('loading-container');
+var topDiv = document.getElementById('selection-container');
 
 var inner_lineColor = '#ED1C24';
 var outer_lineColor = '#FFF';
@@ -56,7 +57,10 @@ var opts = { lines: 13, length: 13, width: 6, radius: 19, scale: 1, corners: 1, 
 
 var spinner = new Spinner(opts);
 
-var role_container = document.getElementById('selection-container');
+var selection_container = document.getElementById('selection-container');
+var role_selectors = document.getElementById('role-selection');
+var camera_selector = document.getElementById('camera');
+var camera_clickable = document.getElementById('camera-upload');
 var ev = document.getElementById('ev');
 var iv = document.getElementById('iv');
 var role;
@@ -126,15 +130,16 @@ function removeCanvasListeners() {
 }
 
 function roleSelection() {
-    var fadeTimer = 500;
-    $(role_container).fadeOut(fadeTimer);
     role = this.id;
+    if(role === 'iv') {
+        $(selection_container).addClass('hidden');
+    } else if (role === 'ev') {
+        $(role_selectors).addClass('hidden');
+        $(camera_selector).removeClass('hidden');
+    }
     setupIVControls();
     socket.emit('role', role);
-    setTimeout(function() {
-        $(container).fadeIn(fadeTimer);
-        resize();
-    }, fadeTimer);
+    resize();
 }
 
 function setupIVControls() {
@@ -145,7 +150,6 @@ function setupIVControls() {
         $(pin).attr('src', '/assets/blue-pin.png');
         $(draw).attr('src', '/assets/blue-scribble.png');
         $(loading).children().remove();
-        $(loading).append('<p id="message">receiving photo</p>');
     }
 }
 
@@ -370,7 +374,9 @@ function drawFalse() {
 }
 
 function cameraClick() {
+    $(selection_container).addClass('hidden');
     $(psuedoIcon).click(); 
+    console.log('click');
 }
 
 function clearAll() {
@@ -542,20 +548,16 @@ function contextSettings(color, width) {
 
 function setupLoadingContainer() {
     $(loading).css({
-        top: canvas.offsetTop + 'px',
-        left: canvas.offsetLeft + 'px',
+        top: canvas.clientTop + 'px',
+        left: canvas.offsetLeft - 8 + 'px',
         height: canvas.height + 'px',
         width: canvas.width + 'px'
-    });
-    $('#message').css({
-        top: canvas.height / 2 + opts.radius * 2 + 'px'
     });
 }
 
 var circle = document.getElementById('circle');
 var polyline = document.getElementById('polyline');
 var checkmark = document.getElementById('checkmark');
-
 
 function animateCheckmark() {
     $(checkmark).css({
@@ -569,4 +571,9 @@ function animateCheckmark() {
         animation: 'dash 2s ease-in-out',
         '-webkit-animation': 'dash 2s ease-in-out'
     });
+    setTimeout(function() {
+        $(checkmark).css({
+            visibility: 'hidden'
+        });
+    }, 1500);
 }

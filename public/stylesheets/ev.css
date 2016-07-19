@@ -5,7 +5,23 @@ stylesheet
 #container {
     width: auto;
     height: 100vh;
-    display: none;
+}
+
+#selection-container {
+    width: 100%;
+    height: inherit;
+    position: absolute;
+    z-index: 1;
+    background-color: #FFF;
+}
+
+#loading-container {
+    position: absolute;
+}
+
+#canvas-container {
+    width: auto;
+    height: inherit;
 }
 
 .controls-landscape {
@@ -80,26 +96,21 @@ stylesheet
     filter: blur(5px);      
 }
 
-#selection-container {
-    z-index: 1;
-    height: 100vh;
-    width: auto;
-}
-
-#selection {
+#role-selection {
     width: 100px;
-    height: 50px;
+    height: 120px;
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
     margin: auto;
+    z-index: 3;
 }
 
-#selection > button {
+#role-selection > button {
     width: 100%;
-    height: 100%;
+    height: 40%;
     margin: 5px auto;
 }
 
@@ -113,7 +124,7 @@ stylesheet
     left: 0;
     right: 0;
     margin: auto;
-    visibility: hidden;
+    z-index: 2;
 }
 
 /* camera button styling only */
@@ -126,11 +137,26 @@ stylesheet
 	z-index: -1;
 }
 
-.checkmark {
-    width: 220px;
-    margin: 0 auto;
-    padding-top: 40px;
-    visibility: hidden;
+#checkmark {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+
+#spinner {
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
 
 .path-animate {
