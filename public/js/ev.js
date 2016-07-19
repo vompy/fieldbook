@@ -1,7 +1,7 @@
 'use strict';
 
 /*
-EV Javascript
+EV/IV Javascript
 */
 
 // basic variable declarations
@@ -20,13 +20,14 @@ var pin = document.getElementById('pin');
 var draw = document.getElementById('draw');
 var loading = document.getElementsByClassName('loading');
 
-var line_color = '#FFF5A6';
-var pin_color = 'yellow';
+var line_color = '#ED1C24';
+var pin_color = 'red';
 
-var yellowPin_img = new Image();
-yellowPin_img.src = '../assets/yellow-pin.png';
+var redPin_img = new Image();
+redPin_img.src = '../assets/red-pin.png';
 var bluePin_img = new Image();
 bluePin_img.src = '../assets/blue-pin.png';
+var counter = 0;
 
 const ratio = 4/3;
 var draw_bool = true;
@@ -65,7 +66,8 @@ socket.on('incoming', startSpin);
 socket.on('received', stopSpin);
 
 socket.on('pin_drop', function(pinpoint) {
-    pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+    counter++;
+    pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
     received_pins.push(pinpoint);
 });
 
@@ -122,7 +124,7 @@ function roleSelection() {
     var fadeTimer = 500;
     $(role_container).fadeOut(fadeTimer);
     role = this.id;
-    setupControls();
+    setupIVControls();
     socket.emit('role', role);
     setTimeout(function() {
         $(container).fadeIn(fadeTimer);
@@ -130,9 +132,9 @@ function roleSelection() {
     }, fadeTimer);
 }
 
-function setupControls() {
+function setupIVControls() {
     if(role === 'iv') {
-        line_color = '#7FB2F0';
+        line_color = '#29ABE2';
         pin_color = 'blue';
         $(newPhoto).addClass('hidden');
         $(pin).attr("src", "/assets/blue-pin.png");
@@ -154,19 +156,25 @@ window.onresize = function() {
     redrawAll();
 }
 
-function pinDrop(color, x, y) {
+function pinDrop(letter, color, x, y) {
     var img;
-    if(color === 'yellow') {
-        img = yellowPin_img;
+    if(color === 'red') {
+        img = redPin_img;
     } else if(color === 'blue') {
         img = bluePin_img;
     }
     var pin_ratio = img.width / img.height;
-    var width = canvas.width / 15;
+    var width = canvas.width / 20;
     var height = width / pin_ratio;
     var left = x * canvas.width - width / 2;
     var top = y * canvas.height - height;
     context.drawImage(img, left, top, width, height);
+    var font_size = width / 2;
+    context.font = font_size + 'px Myriad Pro';
+    context.textBaseline = 'middle';
+    context.textAlign = 'center';
+    context.fillStyle = '#FFF';
+    context.fillText(letter, left + width / 2, top + height / 2.75);
 }
 
 function resize() {
@@ -301,7 +309,7 @@ function localRedraw() {
 function redrawLocalPins() {
     if(local_pins.length > 0) {
         for(var i = 0; i < local_pins.length; i++) {
-            pinDrop(local_pins[i].color, local_pins[i].x, local_pins[i].y);
+            pinDrop(local_pins[i].letter, local_pins[i].color, local_pins[i].x, local_pins[i].y);
         }
     }
 }
@@ -309,7 +317,7 @@ function redrawLocalPins() {
 function redrawReceivedPins() {
     if(received_pins.length > 0) {
         for(var i = 0; i < received_pins.length; i++) {
-            pinDrop(received_pins[i].color, received_pins[i].x, received_pins[i].y);
+            pinDrop(received_pins[i].letter, received_pins[i].color, received_pins[i].x, received_pins[i].y);
         }
     }
 }
@@ -389,6 +397,13 @@ function image(base64Image) {
     }
 }
 
+function toLetters(num) {
+    var mod = num % 26,
+        pow = num / 26 | 0,
+        out = mod ? String.fromCharCode(64 + mod) : (--pow, 'Z');
+    return pow ? toLetters(pow) + out : out;
+}
+
 $(takePhoto).bind('change', function(e){
     socket.emit('incoming');
     var data = e.originalEvent.target.files[0];
@@ -444,12 +459,14 @@ function mousedown(e) {
         context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
         canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
     } else {
+        counter++;
         var pinpoint = {
+            letter: toLetters(counter),
             x: (e.pageX - canvas.offsetLeft) / canvas.width,
             y: (e.pageY - canvas.offsetTop) / canvas.height,
             color: pin_color
         };
-        pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+        pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
         local_pins.push(pinpoint);
         socket.emit('pin_drop', pinpoint);
         lastAction.push('pin');
@@ -478,12 +495,14 @@ function touchstart(e) {
         context.moveTo((e.pageX - canvas.offsetLeft), (e.pageY - canvas.offsetTop));
         canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
     } else {
+        counter++;
         var pinpoint = {
+            letter: toLetters(counter),
             x: (e.pageX - canvas.offsetLeft) / canvas.width,
             y: (e.pageY - canvas.offsetTop) / canvas.height,
             color: pin_color
         };
-        pinDrop(pinpoint.color, pinpoint.x, pinpoint.y);
+        pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
         local_pins.push(pinpoint);
         socket.emit('pin_drop', pinpoint);
         lastAction.push('pin');
