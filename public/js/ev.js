@@ -575,5 +575,13 @@ function animateCheckmark() {
         $(checkmark).css({
             visibility: 'hidden'
         });
+        $(circle).css({
+            animation: '',
+            '-webkit-animation': ''
+        });
+        $(polyline).css({
+            animation: '',
+            '-webkit-animation': ''
+        });
     }, 1500);
 }
