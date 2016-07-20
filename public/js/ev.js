@@ -22,6 +22,10 @@ var draw = document.getElementById('draw');
 var loading = document.getElementById('loading-container');
 var topDiv = document.getElementById('selection-container');
 
+var creative = document.getElementById('creative');
+var state_control = document.getElementById('state-control');
+var tool = document.getElementsByClassName('tool');
+
 var slider = document.getElementById('slider');
 
 var inner_lineColor = '#ED1C24';
@@ -173,6 +177,11 @@ window.onresize = function() {
     resize();
     setupLoadingContainer();
     redrawAll();
+    if(draw_bool === true) {
+        animateSlider(0, 50);
+    } else if (draw_bool === false) {
+        animateSlider(90, 200);
+    }
 }
 
 function pinDrop(letter, color, x, y) {
@@ -203,10 +212,18 @@ function resize() {
         $(canvas).insertAfter(controls);
         $(canvas).removeClass('canvas-portrait');
         $(controls).removeClass('controls-portrait');
-        $(buttons).children().removeClass('buttons-portrait');
+        $(state_control).removeClass('state-control-portrait');
+        $(tool).removeClass('tools-portrait');
+        $(newPhoto).removeClass('photo-portrait');
+        $(creative).removeClass('creative-portrait');
+        $(slider).removeClass('slider-portrait');
         $(canvas).addClass('canvas-landscape');
         $(controls).addClass('controls-landscape');
-        $(buttons).children().addClass('buttons-landscape');
+        $(state_control).addClass('state-control-landscape');
+        $(tool).addClass('tools-landscape');
+        $(newPhoto).addClass('photo-landscape');
+        $(creative).addClass('creative-landscape');
+        $(slider).addClass('slider-landscape');
         landscapeResize();
     } else { 
         $(controls).css({ height: '150px' });
@@ -214,10 +231,18 @@ function resize() {
         $(canvas).insertBefore(controls);
         $(canvas).removeClass('canvas-landscape');
         $(controls).removeClass('controls-landscape');
-        $(buttons).children().removeClass('buttons-landscape');
+        $(state_control).removeClass('state-control-landscape');
+        $(tool).removeClass('tools-landscape');
+        $(newPhoto).removeClass('photo-landscape');
+        $(creative).removeClass('creative-landscape');
+        $(slider).removeClass('slider-landscape');
         $(canvas).addClass('canvas-portrait');
         $(controls).addClass('controls-portrait');
-        $(buttons).children().addClass('buttons-portrait');
+        $(state_control).addClass('state-control-portrait');
+        $(tool).addClass('tools-portrait');
+        $(newPhoto).addClass('photo-portrait');
+        $(creative).addClass('creative-portrait');
+        $(slider).addClass('slider-portrait');
         portraitResize();
     }
 }
@@ -229,6 +254,7 @@ function getOrientation() {
 }
 
 function landscapeResize() {
+    //$('body').css('min-width', '800px');
     var determingDimsension = 'height';
     var width, height;
     var availableWidth = $(container).width() - $(controls).width(); 
@@ -375,20 +401,26 @@ function redrawAll() {
 
 function drawTrue() {
     draw_bool = true;
-    animateSlider(0);
+    animateSlider(0, 50);
 }
 
 function drawFalse() {
     draw_bool = false;
-    animateSlider(105);
+    animateSlider(95, 200);
 }
 
 function erase() {
-    animateSlider(210);   
+    animateSlider(190, 350);   
 }
 
-function animateSlider(pixels) {
-    $(slider).css('marginTop', pixels + 'px');
+function animateSlider(landscape, portrait) {
+    if(getOrientation() === 'landscape') {
+        $(slider).css('margin', '0 -35px');
+        $(slider).css('marginTop', landscape + 'px');
+    } else {
+        $(slider).css('margin', 'auto 50px');
+        $(slider).css('marginLeft', portrait + 'px');
+    }
 }
 
 function cameraClick() {

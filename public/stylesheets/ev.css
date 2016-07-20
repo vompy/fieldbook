@@ -2,6 +2,12 @@
 stylesheet
 */
 
+/*
+body {
+    min-width: 800px;
+}
+*/
+
 #container {
     width: auto;
     height: 100vh;
@@ -27,7 +33,6 @@ stylesheet
 }
 
 .controls-landscape {
-/*    background-color: #B8B8B8;*/
     height: inherit;
     width: 120px;
     display: inline-block;
@@ -57,36 +62,9 @@ stylesheet
     float:left;
 }
 
-.buttons-landscape {
-/*    margin: 10px auto;*/
-/*    display: block;*/
-}
-
 .buttons-portrait {
     margin: 15px;
     display: inline-block;
-}
-
-#photo {
-    position: absolute;
-    top: 10px;
-    margin-left: 25%;
-}
-
-#creative {
-    position: absolute;
-    top: 100px;
-    margin-left: 32%;
-    height: 200px;
-    width: 50px;
-}
-
-#creative > img {
-    display: block;
-    margin-bottom: 120%;
-}
-
-#draw {
 }
 
 #undo {
@@ -101,10 +79,74 @@ stylesheet
     margin: 5px;    
 }
 
-#state-control {
+.tools-landscape {
+    display: block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 50px auto;
+}
+
+.tools-portrait {
+    display: inline-block;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto 50px;
+}
+
+.photo-landscape {
+    position: absolute;
+    top: 10px;
+    margin-left: 25%;
+}
+
+.photo-portrait {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 50px;
+}
+
+.creative-landscape {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin:auto;
+    height: 350px;
+    width: 50px;
+}
+
+.creative-portrait {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    height: 50px;
+    width: 460px;
+}
+
+.state-control-landscape {
     position: absolute;
     bottom: 10px;
     left: 9%;
+    text-align: center;
+}
+
+.state-control-portrait {
+    height: 80px;
+    width: 100px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto 50px;
+    right: 0;
     text-align: center;
 }
 
@@ -209,11 +251,23 @@ stylesheet
     100% { stroke-dashoffset: 0; }
 }
 
-#slider {
+.slider-landscape {
     height: 45px;
-    width: .5rem;
+    width: 8px;
     position: absolute;
-    margin: 0 -38px;
+    top: 50px;
+    margin: 0 -35px;
+    background: #0071BC;
+    border: none;
+    transition: .3s ease-in-out;
+}
+
+.slider-portrait {
+    height: 8px;
+    width: 45px;
+    position: absolute;
+    bottom: -51px;
+    margin: auto 50px;
     background: #0071BC;
     border: none;
     transition: .3s ease-in-out;
