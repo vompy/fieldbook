@@ -1,5 +1,3 @@
-'use strict';
-
 /*
 EV/IV Javascript
 */
@@ -147,6 +145,23 @@ function roleSelection() {
         $(role_selectors).addClass('hidden');
         $(camera_selector).removeClass('hidden');
     }
+    setupIVControls();
+    socket.emit('role', role);
+    resize();
+}
+
+function evRole() {
+    role = 'ev';
+    $(role_selectors).addClass('hidden');
+    $(camera_selector).removeClass('hidden');
+    setupIVControls();
+    socket.emit('role', role);
+    resize();
+}
+
+function ivRole() {
+    role = 'iv';
+    $(selection_container).addClass('hidden');
     setupIVControls();
     socket.emit('role', role);
     resize();
