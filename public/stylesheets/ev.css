@@ -27,7 +27,7 @@ stylesheet
 }
 
 .controls-landscape {
-    background-color: #B8B8B8;
+/*    background-color: #B8B8B8;*/
     height: inherit;
     width: 120px;
     display: inline-block;
@@ -87,7 +87,6 @@ stylesheet
 }
 
 #draw {
-    margin-top: 50%;
 }
 
 #undo {
@@ -208,4 +207,14 @@ stylesheet
 @keyframes dash {
     0% { stroke-dashoffset: 1000; }
     100% { stroke-dashoffset: 0; }
+}
+
+#slider {
+    height: 45px;
+    width: .5rem;
+    position: absolute;
+    margin: 0 -38px;
+    background: #0071BC;
+    border: none;
+    transition: .3s ease-in-out;
 }

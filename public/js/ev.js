@@ -6,7 +6,8 @@ EV/IV Javascript
 
 // basic variable declarations
 var canvas = document.getElementById('canvas');
-var clear = document.getElementById('clear');
+var clear = document.getElementById('clear-all');
+var eraser = document.getElementById('erase');
 var context = canvas.getContext('2d');
 var socket = io.connect();
 var takePhoto = document.getElementById('img-file');
@@ -20,6 +21,8 @@ var pin = document.getElementById('pin');
 var draw = document.getElementById('draw');
 var loading = document.getElementById('loading-container');
 var topDiv = document.getElementById('selection-container');
+
+var slider = document.getElementById('slider');
 
 var inner_lineColor = '#ED1C24';
 var outer_lineColor = '#FFF';
@@ -105,6 +108,7 @@ function addButtonListeners() {
     clear.addEventListener('click', clearAll);
     undo.addEventListener('click', localRedraw);
     newPhoto.addEventListener('click', cameraClick);
+    eraser.addEventListener('click', erase);
     ev.addEventListener('click', roleSelection);
     iv.addEventListener('click', roleSelection);
 }
@@ -371,10 +375,20 @@ function redrawAll() {
 
 function drawTrue() {
     draw_bool = true;
+    animateSlider(0);
 }
 
 function drawFalse() {
     draw_bool = false;
+    animateSlider(105);
+}
+
+function erase() {
+    animateSlider(210);   
+}
+
+function animateSlider(pixels) {
+    $(slider).css('marginTop', pixels + 'px');
 }
 
 function cameraClick() {
