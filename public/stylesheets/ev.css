@@ -17,6 +17,8 @@ stylesheet
 
 #loading-container {
     position: absolute;
+    background-color: #FFF;
+    opacity: 1;
 }
 
 #canvas-container {
@@ -25,21 +27,23 @@ stylesheet
 }
 
 .controls-landscape {
+    background-color: #B8B8B8;
     height: inherit;
-    width: 150px;
+    width: 120px;
     display: inline-block;
     float: left;
+    position: relative;
 }
 
 .controls-portrait {
-    height: 150px;
+    height: 120px;
     width: 100%;
     display: inline-block;
     float: left;
+    position: relative;
 }
 
 .canvas-landscape {
-    background-image: url(../assets/no-photo.png);
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;
@@ -47,20 +51,15 @@ stylesheet
 }
 
 .canvas-portrait {
-    background-image: url(../assets/no-photo.png);
     background-size: contain;
     background-repeat: no-repeat;
     display: inline-block;
     float:left;
 }
 
-#buttons {
-    text-align: center;
-}
-
 .buttons-landscape {
-    margin: 10px auto;
-    display: block;
+/*    margin: 10px auto;*/
+/*    display: block;*/
 }
 
 .buttons-portrait {
@@ -68,19 +67,61 @@ stylesheet
     display: inline-block;
 }
 
-#loading {
-    text-align: center;
-    font-family: 'Myriad Pro';
-    font-size: 1.0em;
-    color: #000; 
-    opacity: 0.75;
+#photo {
     position: absolute;
+    top: 10px;
+    margin-left: 25%;
+}
+
+#creative {
+    position: absolute;
+    top: 100px;
+    margin-left: 32%;
+    height: 200px;
+    width: 50px;
+}
+
+#creative > img {
+    display: block;
+    margin-bottom: 120%;
+}
+
+#draw {
+    margin-top: 50%;
+}
+
+#undo {
+    margin: 5px;
+}
+
+#redo {
+    margin: 5px;
+}
+
+#clear-all {
+    margin: 5px;    
+}
+
+#state-control {
+    position: absolute;
+    bottom: 10px;
+    left: 9%;
+    text-align: center;
 }
 
 #message {
-    position: relative;
-    top: 100px;
-    display: inline-block;
+    width: 300px;
+    height: 30px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: center;
+    font-family: 'Myriad Pro';
+    font-size: 1.5em;
+    color: #000; 
 }
 
 .hidden {
@@ -89,11 +130,6 @@ stylesheet
 
 .visible {
     visibility: visible;
-}
-
-.background {     
-    -webkit-filter: blur(5px);     
-    filter: blur(5px);      
 }
 
 #role-selection {
@@ -138,8 +174,8 @@ stylesheet
 }
 
 #checkmark {
-    width: 200px;
-    height: 200px;
+    width: 150px;
+    height: 150px;
     position: absolute;
     top: 0;
     bottom: 0;

@@ -19,7 +19,7 @@ io.on('connection', (socket) => {
     console.log('Client ' + socket.id + ' connected.');
     if(images.length > 0) {
         socket.join('new');
-        io.in('new').emit('image', images[images.length - 1]);
+        //io.in('new').emit('image', images[images.length - 1]);
         socket.leave('new');
     }
     socket.on('disconnect', () => {

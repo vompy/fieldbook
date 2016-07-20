@@ -25,7 +25,9 @@ var inner_lineColor = '#ED1C24';
 var outer_lineColor = '#FFF';
 var pin_color = 'red';
 
-var inner_lineWidth = 5;
+var loadingMessages = ['No photo has been taken', 'sending photo', 'receiving photo', 'photo received'];
+
+var inner_lineWidth = 3;
 
 var redPin_img = new Image();
 redPin_img.src = '../assets/red-pin.png';
@@ -147,9 +149,11 @@ function setupIVControls() {
         inner_lineColor = '#29ABE2';
         pin_color = 'blue';
         $(newPhoto).addClass('hidden');
-        $(pin).attr('src', '/assets/blue-pin.png');
-        $(draw).attr('src', '/assets/blue-scribble.png');
-        $(loading).children().remove();
+        $(pin).attr('src', '/assets/blue-pin.svg');
+        $(draw).attr('src', '/assets/blue-scribble.svg');
+        $(loading).removeClass('hidden');
+        $(loading).addClass('visible');
+        $('#message').append(loadingMessages[0]);
     }
 }
 
@@ -375,8 +379,9 @@ function drawFalse() {
 
 function cameraClick() {
     $(selection_container).addClass('hidden');
+    $(loading).addClass('visible');
+    $('#message').append(loadingMessages[0]);
     $(psuedoIcon).click(); 
-    console.log('click');
 }
 
 function clearAll() {
@@ -446,22 +451,35 @@ function startSpin() {
     spinner.spin(loading);
     removeButtonListeners();
     removeCanvasListeners();
-    $(canvas).addClass('background');
-    $(controls).addClass('background');
-    $(loading).removeClass('hidden');
     $(loading).addClass('visible');
+    if(role === 'ev') {
+        $(loading).css({
+            backgroundColor: 'rgba(255, 255, 255, 0.75)'
+        });
+        $('#message').contents().filter(function(){ return this.nodeType != 1; }).remove();
+        $('#message').append(loadingMessages[1]);
+        $('#message').css({
+            top: '135px',
+            color: '#000'
+        });
+    } else {
+        $('#message').contents().filter(function(){ return this.nodeType != 1; }).remove();
+        $('#message').append(loadingMessages[2]);
+        $('#message').css('top', '135px');
+    }
 }
 
 function stopSpin() {
     addButtonListeners();
     addCanvasListeners();
-    $(canvas).removeClass('background');
-    $(controls).removeClass('background');
-    $(loading).removeClass('visible');
-    $(loading).addClass('hidden');
     spinner.stop();
     if(role === 'ev') {
+        $('#message').contents().filter(function(){ return this.nodeType != 1; }).remove();
         animateCheckmark();
+    } else {
+        $('#message').contents().filter(function(){ return this.nodeType != 1; }).remove();
+        $(loading).removeClass('visible');
+        $(loading).addClass('hidden');    
     }
 }
 
@@ -560,9 +578,7 @@ var polyline = document.getElementById('polyline');
 var checkmark = document.getElementById('checkmark');
 
 function animateCheckmark() {
-    $(checkmark).css({
-        visibility: 'visible'
-    });
+    $(checkmark).addClass('visible');
     $(circle).css({
         animation: 'dash 2s ease-in-out',
         '-webkit-animation': 'dash 2s ease-in-out'
@@ -571,10 +587,17 @@ function animateCheckmark() {
         animation: 'dash 2s ease-in-out',
         '-webkit-animation': 'dash 2s ease-in-out'
     });
+    $('#message').append(loadingMessages[3]);
+    $('#message').css({
+        top: '175px',
+        color: '#009245'
+    });
     setTimeout(function() {
-        $(checkmark).css({
-            visibility: 'hidden'
-        });
+        $(checkmark).removeClass('visible');
+        $(checkmark).addClass('hidden');
+        $(loading).removeClass('visible');
+        $(loading).addClass('hidden');
+        $('#message').contents().filter(function(){ return this.nodeType != 1; }).remove();
         $(circle).css({
             animation: '',
             '-webkit-animation': ''
@@ -584,5 +607,4 @@ function animateCheckmark() {
             '-webkit-animation': ''
         });
     }, 1500);
-    //$(topDiv).addClass('hidden'); 
 }
