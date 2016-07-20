@@ -393,8 +393,6 @@ function animateSlider(pixels) {
 
 function cameraClick() {
     $(selection_container).addClass('hidden');
-    $(loading).addClass('visible');
-    $('#message').append(loadingMessages[0]);
     $(psuedoIcon).click(); 
 }
 
