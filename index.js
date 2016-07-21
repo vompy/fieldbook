@@ -61,6 +61,9 @@ io.on('connection', (socket) => {
     socket.on('undo', function(data) {
        socket.broadcast.emit('undo', data); 
     });
+    socket.on('redo', function(data) {
+       socket.broadcast.emit('redo', data); 
+    });
 });
 
 setInterval(() => io.emit('time', new Date().toTimeString()), 1000);

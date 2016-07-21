@@ -19,51 +19,38 @@ var pin = document.getElementById('pin');
 var draw = document.getElementById('draw');
 var loading = document.getElementById('loading-container');
 var topDiv = document.getElementById('selection-container');
-
 var creative = document.getElementById('creative');
 var state_control = document.getElementById('state-control');
 var tool = document.getElementsByClassName('tool');
-
 var slider = document.getElementById('slider');
-
 var inner_lineColor = '#ED1C24';
 var outer_lineColor = '#FFF';
 var pin_color = 'red';
-
 var loadingMessages = ['No photo has been taken', 'sending photo', 'receiving photo', 'photo received'];
-
 var inner_lineWidth = 3;
-
 var redPin_img = new Image();
 redPin_img.src = '../assets/red-pin.png';
 var bluePin_img = new Image();
 bluePin_img.src = '../assets/blue-pin.png';
 var counter = 0;
-
 const ratio = 4/3;
 var draw_bool = true;
 var drawing = false;
-
 var lines_to_draw = []; // Array of recieved lines to draw in real time
-
 var local_lines = []; // Array of local lines to store
 var local_line_coords = []; // Array of local line coordinates to be sent
-
 var received_lines = []; // Array of received lines to store
 var received_line_coords = []; // Array of received line coordinates to store 
-
 var local_pins = [];
 var received_pins = [];
-
+var redo_pins = [];
+var redo_received_pins = [];
 var undoStack = [];
 var redoStack = [];
-
 var lastAction = [];
-
+var redoAction = [];
 var opts = { lines: 13, length: 13, width: 6, radius: 19, scale: 1, corners: 1, color: '#000', opacity: 0.25, rotate: 0, direction: 1, speed: 1, trail: 60, fps: 20, zIndex: 2e9, className: 'spinner', top: '50%', left: '50%', shadow: false, hwaccel: false, position: 'absolute' };
-
 var spinner = new Spinner(opts);
-
 var selection_container = document.getElementById('selection-container');
 var role_selectors = document.getElementById('role-selection');
 var camera_selector = document.getElementById('camera');
@@ -72,7 +59,7 @@ var ev = document.getElementById('ev');
 var iv = document.getElementById('iv');
 var role;
 
-socket.on('clear', clearCanvas);        
+socket.on('clear', clearReceived);        
 
 socket.on('image', image);
 
@@ -99,16 +86,28 @@ socket.on('undo', function(data) {
         received_lines.pop();
     } else if(data.action === 'pin') {
         counter--;
-        received_pins.pop();
+        redo_received_pins.push(received_pins.pop());
     }    
     redrawAll();
+});
+
+socket.on('redo', function(data) {
+    if(data.action === 'draw') {
+        received_lines.push(data.lines[data.lines.length - 1]);
+        redrawAll();
+    } else if(data.action === 'pin') {
+        counter--;
+        received_pins.push(redo_received_pins.pop());
+        redrawAll();
+    }    
 });
 
 function addButtonListeners() {
     pin.addEventListener('click', drawFalse);
     draw.addEventListener('click', drawTrue);
     clear.addEventListener('click', clearAll);
-    undo.addEventListener('click', localRedraw);
+    undo.addEventListener('click', undoRedraw);
+    redo.addEventListener('click', redoRedraw);
     newPhoto.addEventListener('click', cameraClick);
     eraser.addEventListener('click', erase);
     ev.addEventListener('click', roleSelection);
@@ -126,7 +125,8 @@ function removeButtonListeners() {
     pin.removeEventListener('click', drawFalse);
     draw.removeEventListener('click', drawTrue);
     clear.removeEventListener('click', clearAll);
-    undo.removeEventListener('click', localRedraw);
+    undo.removeEventListener('click', undoRedraw);
+    redo.removeEventListener('click', redoRedraw);
     newPhoto.removeEventListener('click', cameraClick);
 }
 
@@ -135,6 +135,16 @@ function removeCanvasListeners() {
     canvas.removeEventListener('mouseup', mouseup);
     canvas.removeEventListener('touchstart', touchstart);
     canvas.removeEventListener('touchend', touchend);
+}
+
+function clearReceived() {
+    var temp_lines = received_lines;
+    var temp_pins = received_pins;
+    received_lines = [];
+    received_pins = [];
+    redrawAll();
+    received_lines = temp_lines;
+    received_pins = temp_pins;
 }
 
 function roleSelection() {
@@ -269,7 +279,6 @@ function getOrientation() {
 }
 
 function landscapeResize() {
-    //$('body').css('min-width', '800px');
     var determingDimsension = 'height';
     var width, height;
     var availableWidth = $(container).width() - $(controls).width(); 
@@ -349,21 +358,64 @@ function incomingLines() {
     }, 10);
 }
 
-function localRedraw() {
+function undoRedraw() {
     if(lastAction.length > 0 && (undoStack.length > 0 || local_pins.length > 0)) { // Draw all lines in undoStack
         if(lastAction[lastAction.length - 1] === 'draw') {
-            undoStack.pop();
+            redoStack.push(undoStack.pop());
+            redrawAll();
         } else if(lastAction[lastAction.length - 1] === 'pin') {
             counter--;
-            local_pins.pop();
+            redo_pins.push(local_pins.pop());
+            redrawAll();
+        } else if(lastAction[lastAction.length - 1] === 'clear') {
+            redrawAll();
         }
         var event = {
             lines: coordsToLines(undoStack),
             action: lastAction[lastAction.length - 1]
-        }
-        redrawAll();
+        };
+        redoAction.push(lastAction.pop());
         socket.emit('undo', event);
-        lastAction.pop();
+    }
+}
+
+function redoRedraw() {
+    if((redoAction.length > 0 || (redoStack.length > 0 || redo_pins.length > 0)) && lastAction[lastAction.length - 1] !== 'clear') { // Draw all lines in undoStack
+        if(redoAction[redoAction.length - 1] === 'draw') {
+            undoStack.push(redoStack.pop());
+            redrawAll();
+        } else if(redoAction[redoAction.length - 1] === 'pin') {
+            counter--;
+            local_pins.push(redo_pins.pop());
+            redrawAll();
+        } else if (redoAction[redoAction.length - 1] === 'clear') {
+            clearAll();
+        }
+        var event = {
+            lines: coordsToLines(undoStack),
+            action: redoAction[redoAction.length - 1]
+        };
+        socket.emit('redo', event);
+        var act = redoAction.pop();
+        if(act === 'draw' || act === 'pin') {
+            lastAction.push(act);
+        }
+    }
+}
+
+function clearAll() {
+    if(lastAction.length > 0 && lastAction[lastAction.length - 1] !== 'clear') {
+        redoStack = undoStack;
+        undoStack =[];
+        redo_pins = local_pins;
+        local_pins = [];
+        redrawAll();
+        undoStack = redoStack;
+        local_pins = redo_pins;
+        redo_pins = [];
+        redoStack = [];
+        lastAction.push('clear');
+        socket.emit('clear');
     }
 }
 
@@ -443,14 +495,6 @@ function cameraClick() {
     $(psuedoIcon).click(); 
 }
 
-function clearAll() {
-    if(lastAction.length > 0 && lastAction[lastAction.length - 1] !== 'clear') {
-        lastAction.push('clear');
-    }
-    clearCanvas();
-    socket.emit('clear');
-}
-
 function clearCanvas() {
     context.clearRect(0, 0, canvas.width, canvas.height);     
 }
@@ -464,6 +508,9 @@ function image(base64Image) {
     local_pins = []; 
     received_pins = [];
     lastAction = [];
+    redo_pins = [];
+    redo_received_pins = [];
+    redoAction = [];
     $(canvas).css('background-image', 'url(' + base64Image + ')');
     clearCanvas();
     $(controls).css('visibility', 'visible');
@@ -542,12 +589,14 @@ function stopSpin() {
     }
 }
 
+var handled = false;
+
 function mousedown(e) {
-    if(draw_bool) {
+    if(draw_bool && !handled) {
         drawing = true;
         startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);     
         canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
-    } else {
+    } else if (!handled) {
         counter++;
         var pinpoint = {
             letter: toLetters(counter),
@@ -556,23 +605,40 @@ function mousedown(e) {
             color: pin_color
         };
         pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
-        local_pins.push(pinpoint);
         socket.emit('pin_drop', pinpoint);
+        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0 ) {
+            undoStack = [];
+            local_pins = [];
+            lastAction = [];
+        }
+        redoAction = [];
+        redoStack = [];
+        redo_pins = [];
+        local_pins.push(pinpoint);
         lastAction.push('pin');
     }
 }
 
 function mouseup() {
-    if(draw_bool) {
+    if(draw_bool && !handled) {
         drawing = false;
         canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
-        undoStack.push(local_lines);
         socket.emit('line_end');
+        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
+            undoStack = [];
+            local_pins = [];
+            lastAction = [];
+        }
+        redoAction = [];
+        redoStack = [];
+        redo_pins = [];
+        undoStack.push(local_lines);
         lastAction.push('draw');
     }
 }
 
 function touchstart(e) {
+    handled = true;
     if(draw_bool) {
         e.preventDefault();
         e.stopPropagation();
@@ -589,20 +655,37 @@ function touchstart(e) {
             color: pin_color
         };
         pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
-        local_pins.push(pinpoint);
         socket.emit('pin_drop', pinpoint);
+        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
+            undoStack = [];
+            local_pins = [];
+            lastAction = [];
+        }
+        redoAction = [];
+        redoStack = [];
+        redo_pins = [];
+        local_pins.push(pinpoint);
         lastAction.push('pin');
     }
 }
 
 function touchend(e) {
+    handled = true;
     if(draw_bool) {
         e.preventDefault();
         e.stopPropagation();
         drawing = false;
         canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
-        undoStack.push(local_lines);
         socket.emit('line_end');
+        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
+            undoStack = [];
+            local_pins = [];
+            lastAction = [];
+        }
+        redoAction = [];
+        redoStack = [];
+        redo_pins = [];
+        undoStack.push(local_lines);
         lastAction.push('draw');
     }
 }
