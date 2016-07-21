@@ -117,8 +117,8 @@ function addButtonListeners() {
 function addCanvasListeners() {
     canvas.addEventListener('mousedown', mousedown);  
     canvas.addEventListener('mouseup', mouseup);
-    canvas.addEventListener('touchstart', touchstart);
-    canvas.addEventListener('touchend', touchend);
+    //canvas.addEventListener('touchstart', touchstart);
+    //canvas.addEventListener('touchend', touchend);
 }
 
 function removeButtonListeners() {
@@ -133,8 +133,8 @@ function removeButtonListeners() {
 function removeCanvasListeners() {
     canvas.removeEventListener('mousedown', mousedown);  
     canvas.removeEventListener('mouseup', mouseup);
-    canvas.removeEventListener('touchstart', touchstart);
-    canvas.removeEventListener('touchend', touchend);
+    //canvas.removeEventListener('touchstart', touchstart);
+    //canvas.removeEventListener('touchend', touchend);
 }
 
 function clearReceived() {
