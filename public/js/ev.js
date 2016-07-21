@@ -618,7 +618,7 @@ function mousedown(e) {
 }
 
 function mouseup() {
-    if(draw_bool && !handled) {
+    if(draw_bool) {
         drawing = false;
         canvas.removeEventListener('mousemove touchmove', startSavingLineCoords); // Stop saving local line coords
         socket.emit('line_end');
