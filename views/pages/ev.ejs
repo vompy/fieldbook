@@ -3,7 +3,6 @@
     <head>
         <% include ../partials/header.ejs %>
         <link rel="stylesheet" type="text/css" href="/stylesheets/ev.css" />
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     </head>
     <body>
         <div id='container'>
@@ -36,14 +35,14 @@
                             <hr id='slider'>
                             <img class='tool' id='draw' height='45px' width='auto' src='/assets/red-scribble.svg'>
                             <img class='tool' id='pin' height='45px' width='auto' src='/assets/red-pin.svg'>
-                            <img class='tool' id='erase' height='45px' width='auto' src='/assets/eraser.svg'>
+                            <img class='tool hidden' id='erase' height='45px' width='auto' src='/assets/eraser.svg'>
                         </div>
                         <div id='state-control'>
                             <div id='arrows'>
                                 <img id='undo' height='35px' width='auto' src='/assets/undo.svg'>
                                 <img id='redo' height='35px' width='auto' src='/assets/redo.svg'>
                             </div>
-                            <img id='clear-all' height='20px' width='auto' src='/assets/clear-all.svg'>
+                            <img class='hidden' id='clear-all' height='20px' width='auto' src='/assets/clear-all.svg'>
                         </div> 
                     </div>
                 </div>

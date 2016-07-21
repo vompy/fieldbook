@@ -209,7 +209,7 @@ function pinDrop(letter, color, x, y) {
     context.shadowBlur = 0;
     context.drawImage(img, left, top, width, height);
     var font_size = width / 2;
-    context.font = font_size + 'px "Avenir Medium"';
+    context.font = font_size + 'px Verdana';
     context.textBaseline = 'middle';
     context.textAlign = 'center';
     context.fillStyle = '#FFF';

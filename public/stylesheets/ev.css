@@ -145,7 +145,7 @@ stylesheet
 }
 
 #message {
-    width: 300px;
+    width: 320px;
     height: 30px;
     position: absolute;
     top: 0;
@@ -154,7 +154,7 @@ stylesheet
     right: 0;
     margin: auto;
     text-align: center;
-    font-family: 'Avenir Medium';
+    font-family: 'Verdana';
     font-size: 1.5em;
     color: #000; 
 }
