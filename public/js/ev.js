@@ -589,14 +589,12 @@ function stopSpin() {
     }
 }
 
-var handled = false;
-
 function mousedown(e) {
-    if(draw_bool && !handled) {
+    if(draw_bool) {
         drawing = true;
         startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);     
-        canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
-    } else if (!handled) {
+        canvas.addEventListener('mousemove touchmove', startSavingLineCoords); // Start saving coords and drawing
+    } else {
         counter++;
         var pinpoint = {
             letter: toLetters(counter),
@@ -622,7 +620,7 @@ function mousedown(e) {
 function mouseup() {
     if(draw_bool && !handled) {
         drawing = false;
-        canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
+        canvas.removeEventListener('mousemove touchmove', startSavingLineCoords); // Stop saving local line coords
         socket.emit('line_end');
         if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
             undoStack = [];
@@ -637,58 +635,56 @@ function mouseup() {
     }
 }
 
-function touchstart(e) {
-    handled = true;
-    if(draw_bool) {
-        e.preventDefault();
-        e.stopPropagation();
-        drawing = true;
-        startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);        
-        canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
-    
-    } else {
-        counter++;
-        var pinpoint = {
-            letter: toLetters(counter),
-            x: (e.pageX - canvas.offsetLeft) / canvas.width,
-            y: (e.pageY - canvas.offsetTop) / canvas.height,
-            color: pin_color
-        };
-        pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
-        socket.emit('pin_drop', pinpoint);
-        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
-            undoStack = [];
-            local_pins = [];
-            lastAction = [];
-        }
-        redoAction = [];
-        redoStack = [];
-        redo_pins = [];
-        local_pins.push(pinpoint);
-        lastAction.push('pin');
-    }
-}
-
-function touchend(e) {
-    handled = true;
-    if(draw_bool) {
-        e.preventDefault();
-        e.stopPropagation();
-        drawing = false;
-        canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
-        socket.emit('line_end');
-        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
-            undoStack = [];
-            local_pins = [];
-            lastAction = [];
-        }
-        redoAction = [];
-        redoStack = [];
-        redo_pins = [];
-        undoStack.push(local_lines);
-        lastAction.push('draw');
-    }
-}
+//function touchstart(e) {
+//    if(draw_bool) {
+//        e.preventDefault();
+//        e.stopPropagation();
+//        drawing = true;
+//        startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);        
+//        canvas.addEventListener('touchmove', startSavingLineCoords); // Start saving coords and drawing
+//    
+//    } else {
+//        counter++;
+//        var pinpoint = {
+//            letter: toLetters(counter),
+//            x: (e.pageX - canvas.offsetLeft) / canvas.width,
+//            y: (e.pageY - canvas.offsetTop) / canvas.height,
+//            color: pin_color
+//        };
+//        pinDrop(pinpoint.letter, pinpoint.color, pinpoint.x, pinpoint.y);
+//        socket.emit('pin_drop', pinpoint);
+//        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
+//            undoStack = [];
+//            local_pins = [];
+//            lastAction = [];
+//        }
+//        redoAction = [];
+//        redoStack = [];
+//        redo_pins = [];
+//        local_pins.push(pinpoint);
+//        lastAction.push('pin');
+//    }
+//}
+//
+//function touchend(e) {
+//    if(draw_bool) {
+//        e.preventDefault();
+//        e.stopPropagation();
+//        drawing = false;
+//        canvas.removeEventListener('touchmove', startSavingLineCoords); // Stop saving local line coords
+//        socket.emit('line_end');
+//        if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
+//            undoStack = [];
+//            local_pins = [];
+//            lastAction = [];
+//        }
+//        redoAction = [];
+//        redoStack = [];
+//        redo_pins = [];
+//        undoStack.push(local_lines);
+//        lastAction.push('draw');
+//    }
+//}
 
 function startDrawingLine(x, y, width, color) {
     local_line_coords = [[(x - canvas.offsetLeft), (y - canvas.offsetTop)]]; // Starting coords for new line
