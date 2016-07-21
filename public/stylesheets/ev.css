@@ -2,12 +2,6 @@
 stylesheet
 */
 
-/*
-body {
-    min-width: 800px;
-}
-*/
-
 #container {
     width: auto;
     height: 100vh;
@@ -160,7 +154,7 @@ body {
     right: 0;
     margin: auto;
     text-align: center;
-    font-family: 'Myriad Pro';
+    font-family: 'Avenir Medium';
     font-size: 1.5em;
     color: #000; 
 }
