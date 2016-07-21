@@ -154,24 +154,9 @@ function roleSelection() {
     } else if (role === 'ev') {
         $(role_selectors).addClass('hidden');
         $(camera_selector).removeClass('hidden');
+        $('#message').append(loadingMessages[0]);
+        $('#message').addClass('hidden');        
     }
-    setupIVControls();
-    socket.emit('role', role);
-    resize();
-}
-
-function evRole() {
-    role = 'ev';
-    $(role_selectors).addClass('hidden');
-    $(camera_selector).removeClass('hidden');
-    setupIVControls();
-    socket.emit('role', role);
-    resize();
-}
-
-function ivRole() {
-    role = 'iv';
-    $(selection_container).addClass('hidden');
     setupIVControls();
     socket.emit('role', role);
     resize();
@@ -491,8 +476,10 @@ function animateSlider(landscape, portrait) {
 }
 
 function cameraClick() {
+    $(psuedoIcon).click();
     $(selection_container).addClass('hidden');
-    $(psuedoIcon).click(); 
+    $(loading).addClass('visible');
+    $('#message').removeClass('hidden');       
 }
 
 function clearCanvas() {

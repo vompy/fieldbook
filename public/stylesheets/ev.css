@@ -68,15 +68,15 @@ body {
 }
 
 #undo {
-    margin: 5px;
+    margin: 8px;
 }
 
 #redo {
-    margin: 5px;
+    margin: 8px;
 }
 
 #clear-all {
-    margin: 5px;    
+    margin: 10px;    
 }
 
 .tools-landscape {
@@ -141,7 +141,7 @@ body {
 
 .state-control-portrait {
     height: 80px;
-    width: 100px;
+    width: 110px;
     position: absolute;
     top: 0;
     bottom: 0;
