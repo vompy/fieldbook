@@ -580,7 +580,7 @@ function mousedown(e) {
     if(draw_bool) {
         drawing = true;
         startDrawingLine(e.pageX, e.pageY, inner_lineWidth, inner_lineColor);     
-        canvas.addEventListener('mousemove touchmove', startSavingLineCoords); // Start saving coords and drawing
+        canvas.addEventListener('mousemove', startSavingLineCoords); // Start saving coords and drawing
     } else {
         counter++;
         var pinpoint = {
@@ -607,7 +607,7 @@ function mousedown(e) {
 function mouseup() {
     if(draw_bool) {
         drawing = false;
-        canvas.removeEventListener('mousemove touchmove', startSavingLineCoords); // Stop saving local line coords
+        canvas.removeEventListener('mousemove', startSavingLineCoords); // Stop saving local line coords
         socket.emit('line_end');
         if(lastAction[lastAction.length - 1] === 'clear' || lastAction.length === 0) {
             undoStack = [];
