@@ -85,7 +85,9 @@ socket.on('undo', function(data) {
     if(data.action === 'draw') {
         received_lines.pop();
     } else if(data.action === 'pin') {
-        counter--;
+        if(counter > 0) {
+            counter--;
+        }
         redo_received_pins.push(received_pins.pop());
     }    
     redrawAll();
@@ -96,7 +98,9 @@ socket.on('redo', function(data) {
         received_lines.push(data.lines[data.lines.length - 1]);
         redrawAll();
     } else if(data.action === 'pin') {
-        counter--;
+        if(counter > 0) {
+            counter--;
+        }        
         received_pins.push(redo_received_pins.pop());
         redrawAll();
     }    
@@ -349,7 +353,9 @@ function undoRedraw() {
             redoStack.push(undoStack.pop());
             redrawAll();
         } else if(lastAction[lastAction.length - 1] === 'pin') {
-            counter--;
+            if(counter > 0) {
+                counter--;
+            }
             redo_pins.push(local_pins.pop());
             redrawAll();
         } else if(lastAction[lastAction.length - 1] === 'clear') {
@@ -370,7 +376,9 @@ function redoRedraw() {
             undoStack.push(redoStack.pop());
             redrawAll();
         } else if(redoAction[redoAction.length - 1] === 'pin') {
-            counter--;
+            if(counter > 0) {
+                counter--;
+            }
             local_pins.push(redo_pins.pop());
             redrawAll();
         } else if (redoAction[redoAction.length - 1] === 'clear') {
@@ -536,6 +544,16 @@ function detectNonAppleMobile() {
 }
 
 document.ontouchmove = function(e) {
+    e.preventDefault();    
+    e.stopPropagation();
+}
+
+controls.ontouchstart = function(e) {
+    e.preventDefault();    
+    e.stopPropagation();
+}
+
+controls.ontouchend = function(e) {
     e.preventDefault();    
     e.stopPropagation();
 }
