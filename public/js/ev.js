@@ -572,6 +572,13 @@ canvas.onmouseup = function(e) {
     }
 }
 
+canvas.onclick = function(e) {
+    if(!draw_bool) {
+        e.preventDefault();    
+        e.stopPropagation();
+    }
+}
+
 function startSpin() {
     spinner.spin(loading);
     removeButtonListeners();
