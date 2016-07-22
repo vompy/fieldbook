@@ -558,26 +558,6 @@ controls.ontouchmove = function(e) {
 //    e.stopPropagation();
 //}
 
-canvas.onmousedown = function(e) {
-    if(!draw_bool) {
-        e.preventDefault();    
-        e.stopPropagation();
-    }
-}
-
-canvas.onmouseup = function(e) {
-    if(!draw_bool) {
-        e.preventDefault();    
-        e.stopPropagation();
-    }
-}
-
-canvas.onclick = function(e) {
-    if(!draw_bool) {
-        e.preventDefault();    
-        e.stopPropagation();
-    }
-}
 
 function startSpin() {
     spinner.spin(loading);
