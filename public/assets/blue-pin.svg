@@ -1,1 +1,14 @@
-<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236.88 231.12"><defs><style>.cls-1{fill:#29abe2;}</style></defs><title>blue-pin</title><path class="cls-1" d="M192.82,72.5c-.65,19.53-8.84,35.4-25.3,48a16.33,16.33,0,0,0-5.44,6.75q-19.1,45.18-38.37,90.31c-.14.33-.33.64-.44,1a4.69,4.69,0,0,1-4.78,3.4,5.08,5.08,0,0,1-5.13-3.44Q107.2,203.9,101,189.31q-13.18-31-26.33-62a15.68,15.68,0,0,0-5.22-6.59C55.38,110,46.87,96.79,44.66,80.8c-2.69-19.45,3.63-36.64,19.18-51C86.31,9,120.92,3.23,150.63,15.74c24.9,10.49,38.82,28,41.74,51.74C192.6,69.39,192.71,71.3,192.82,72.5Z"/></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="52px" height="69px" viewBox="0 0 52 69" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 39 (31667) - http://www.bohemiancoding.com/sketch -->
+    <title>red-pin</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="red-pin" fill="#29ABE2">
+            <g id="Group">
+                <path d="M26,69 C26,69 52,45.4432547 52,23.71875 C51.9999996,10.6192455 40.3594042,0 26,0 C11.6405958,0 -4.31522793e-07,10.6192455 0,23.71875 C0,45.4432547 26,69 26,69 L26,69 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

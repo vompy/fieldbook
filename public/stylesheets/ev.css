@@ -131,7 +131,8 @@ stylesheet
 .state-control-landscape {
     position: absolute;
     bottom: 10px;
-    left: 9%;
+    left: 50%;
+    right: 50%;
     text-align: center;
 }
 
