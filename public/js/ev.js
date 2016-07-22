@@ -548,15 +548,15 @@ document.ontouchmove = function(e) {
     e.stopPropagation();
 }
 
-controls.ontouchstart = function(e) {
+controls.ontouchmove = function(e) {
     e.preventDefault();    
     e.stopPropagation();
 }
 
-controls.ontouchend = function(e) {
-    e.preventDefault();    
-    e.stopPropagation();
-}
+//controls.ontouchend = function(e) {
+//    e.preventDefault();    
+//    e.stopPropagation();
+//}
 
 function startSpin() {
     spinner.spin(loading);
