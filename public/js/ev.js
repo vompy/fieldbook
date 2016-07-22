@@ -558,6 +558,20 @@ controls.ontouchmove = function(e) {
 //    e.stopPropagation();
 //}
 
+canvas.ontouchstart = function(e) {
+    if(!draw_bool) {
+        e.preventDefault();    
+        e.stopPropagation();
+    }
+}
+
+canvas.ontouchend = function(e) {
+    if(!draw_bool) {
+        e.preventDefault();    
+        e.stopPropagation();
+    }
+}
+
 function startSpin() {
     spinner.spin(loading);
     removeButtonListeners();
