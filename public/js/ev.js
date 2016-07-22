@@ -558,14 +558,14 @@ controls.ontouchmove = function(e) {
 //    e.stopPropagation();
 //}
 
-canvas.ontouchstart = function(e) {
+canvas.onmousedown = function(e) {
     if(!draw_bool) {
         e.preventDefault();    
         e.stopPropagation();
     }
 }
 
-canvas.ontouchend = function(e) {
+canvas.onmouseup = function(e) {
     if(!draw_bool) {
         e.preventDefault();    
         e.stopPropagation();
