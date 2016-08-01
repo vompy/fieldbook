@@ -1,5 +1,3 @@
-'use strict';
-
 var express = require('express');
 var app = express();
 var socket = require('socket.io');
@@ -9,38 +7,15 @@ var server = app.listen(process.env.PORT || 3000);
 var io = socket.listen(server);
 var config = {};
 
-var images = [];
-var ev = 0;
-var iv = 0;
-
-var player = 0;
-
 io.on('connection', (socket) => {
     console.log('Client ' + socket.id + ' connected.');
-    if(images.length > 0) {
-        socket.join('new');
-        //io.in('new').emit('image', images[images.length - 1]);
-        socket.leave('new');
-    }
     socket.on('disconnect', () => {
         console.log('Client ' + socket.id + ' disconnected.');
-        if(player > 0) {
-            player--;
-            console.log('players: ' + player);
-        }
-        if(player === 0) {
-            images = [];
-        }
-    });
-    socket.on('role', function(data) {
-        player++;
-        console.log('players: ' + player);
     });
     socket.on('incoming', function(data) {
        socket.broadcast.emit('incoming'); 
     });
     socket.on('image', function(image) {
-        images.push(image);
         socket.broadcast.emit('image', image);
     });
     socket.on('received', function(data) {
@@ -66,22 +41,12 @@ io.on('connection', (socket) => {
     });
 });
 
-setInterval(() => io.emit('time', new Date().toTimeString()), 1000);
-
 app.use(express.static(__dirname + '/public'));
 
 //views is directory for all template files
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-app.get('/test', function(request, response) {
+app.get('/', function(request, response) {
   response.render('pages/index');
-});
-
-app.get('/ev', function(request, response) {
-  response.render('pages/ev');
-});
-
-app.get('/iv', function(request, response) {
-  response.render('pages/iv');
 });

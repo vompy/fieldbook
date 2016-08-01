@@ -1,67 +1,55 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <% include ../partials/header.ejs %>
-</head>
-
-<body>
-
-  <% include ../partials/nav.ejs %>
-
-<div class="jumbotron text-center">
-  <div class="container">
-    <a href="/" class="lang-logo">
-      <img src="/lang-logo.png">
-    </a>
-    <h1>Getting Started with Node on Heroku</h1>
-    <p>This is a sample Node application deployed to Heroku. It's a reasonably simple app - but a good foundation for understanding how to get the most out of the Heroku platform.</p>
-    <a type="button" class="btn btn-lg btn-default" href="https://devcenter.heroku.com/articles/getting-started-with-nodejs"><span class="glyphicon glyphicon-flash"></span> Getting Started with Node</a>
-    <a type="button" class="btn btn-lg btn-primary" href="https://github.com/heroku/node-js-getting-started"><span class="glyphicon glyphicon-download"></span> Source on GitHub</a>
-  </div>
-</div>
-<div class="container">
-  <div class="alert alert-info text-center" role="alert">
-    To deploy your own copy, and learn the fundamentals of the Heroku platform, head over to the <a href="https://devcenter.heroku.com/articles/getting-started-with-nodejs" class="alert-link">Getting Started with Node on Heroku</a> tutorial.
-  </div>
-  <hr>
-  <div class="row">
-    <div class="col-md-6">
-      <h3><span class="glyphicon glyphicon-info-sign"></span> How this sample app works</h3>
-      <ul>
-        <li>This app was deployed to Heroku, either using Git or by using <a href="https://github.com/heroku/node-js-getting-started">Heroku Button</a> on the repository.</li>
-
-        <li>When Heroku received the source code, it fetched all the dependencies in the <a href="https://github.com/heroku/node-js-getting-started/blob/master/package.json">package.json</a>, creating a deployable slug.</li>
-        <li>The platform then spins up a dyno, a lightweight container that provides an isolated environment in which the slug can be mounted and executed.</li>
-        <li>You can scale your app, manage it, and deploy over <a href="https://addons.heroku.com/">150 add-on services</a>, from the Dashboard or CLI.</li>
-      </ul>
-    </div>
-    <div class="col-md-6">
-      <h3><span class="glyphicon glyphicon-link"></span> Next Steps</h3>
-      <ul>
-        <li>If you are following the <a href="https://devcenter.heroku.com/articles/getting-started-with-nodejs">Getting Started</a> guide, then please head back to the tutorial and follow the next steps!</li>
-        <li>If you deployed this app by deploying the Heroku Button, then in a command line shell, run:</li>
-        <ul>
-          <li><code>git clone https://github.com/heroku/node-js-getting-started.git</code> - this will create a local copy of the source code for the app</li>
-          <li><code>cd node-js-getting-started</code> - change directory into the local source code repository</li>
-          <li><code>heroku git:remote -a &lt;your-app-name></code> - associate the Heroku app with the repository</li>
-          <li>You'll now be set up to run the app locally, or <a href="https://devcenter.heroku.com/articles/getting-started-with-nodejs#push-local-changes">deploy changes</a> to Heroku</li>
-        </ul>
-      </ul>
-      <h3><span class="glyphicon glyphicon-link"></span> Helpful Links</h3>
-      <ul>
-        <li><a href="https://www.heroku.com/home">Heroku</a></li>
-        <li><a href="https://devcenter.heroku.com/">Heroku Dev Center</a></li>
-        <li><a href="https://devcenter.heroku.com/articles/getting-started-with-nodejs">Getting Started with Node on Heroku</a></li>
-        <li><a href="https://devcenter.heroku.com/articles/deploying-nodejs">Deploying Node Apps on Heroku</a></li>
-      </ul>
-    </div>
-  </div> <!-- row -->
-   <div class="alert alert-info text-center" role="alert">
-    Please do work through the Getting Started guide, even if you do know how to build such an application.  The guide covers the basics of working with Heroku, and will familiarize you with all the concepts you need in order to build and deploy your own apps.
-  </div>
-</div>
-
-
-
-</body>
+    <head>
+        <% include ../partials/header.ejs %>
+        <link rel="stylesheet" type="text/css" href="/stylesheets/main.css" />
+        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"> 
+    </head>
+    <body>
+        <div id='container'>
+            <div id='selection-container'>
+                <div id='role-selection'>
+                    <img id='ev' src='/assets/EV.svg'>
+                    <img id='iv' src='/assets/IV.svg'>
+                </div>
+                <div id='camera' class='hidden'>
+                    <img id="camera-upload" onclick="cameraClick();" src='/assets/take-photo.svg'>
+                    <input type='file' id='img-file' accept='image/*' capture='camera'>
+                    <label id='label' for='img-file'></label>
+                </div>
+                <div id='loading-container'>
+                    <div id='spinner'></div>
+                    <div id='checkmark' class='hidden'>
+                        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 161.2 161.2" enable-background="new 0 0 161.2 161.2" xml:space="preserve">
+                            <circle id='circle' class="path-animate" fill="none" stroke="#009245" stroke-width="4" stroke-miterlimit="10" cx="80.6" cy="80.6" r="62.1"/>
+                            <polyline id='polyline' class="path-animate" fill="none" stroke="#009245" stroke-width="6" stroke-linecap="round" stroke-miterlimit="10" points="113,52.8 74.1,108.4 48.2,86.4 "/>
+                        </svg>
+                    </div>
+                    <div id='message'></div>
+                </div>
+            </div>
+            <div id='canvas-container'>
+                <div id='controls'>
+                    <div id='buttons'>
+                        <img id='photo' height='60px' width='auto' src='/assets/camera.svg'>
+                        <div id='creative'>
+                            <hr id='slider'>
+                            <img class='tool' id='draw' height='45px' width='auto' src='/assets/red-scribble.svg'>
+                            <img class='tool' id='pin' height='45px' width='auto' src='/assets/red-pin.svg'>
+                            <img class='tool hidden' id='erase' height='45px' width='auto' src='/assets/eraser.svg'>
+                        </div>
+                        <div id='state-control'>
+                            <div id='arrows'>
+                                <img id='undo' height='35px' width='auto' src='/assets/undo.svg'>
+                                <img id='redo' height='35px' width='auto' src='/assets/redo.svg'>
+                            </div>
+                            <img class='hidden' id='clear-all' height='20px' width='auto' src='/assets/clear-all.svg'>
+                        </div> 
+                    </div>
+                </div>
+                <canvas id='canvas'></canvas>
+            </div>
+        </div>
+    </body>
+    <script src="/js/main.js"></script>
 </html>
